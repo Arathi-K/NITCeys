@@ -1,0 +1,210 @@
+-- Creating the tables
+
+CREATE TABLE Hall (
+    Hall_id VARCHAR(255) PRIMARY KEY,
+    Hall_name VARCHAR(255),
+    location VARCHAR(255)
+);
+
+CREATE TABLE Hall_Booking (
+    Date_ DATE,
+    Start_time TIME,
+    End_time TIME,
+    Hall_id VARCHAR(255),
+    User_id VARCHAR(255),
+    is_approved BOOLEAN,
+    FOREIGN KEY (Hall_id) REFERENCES Hall(Hall_id)
+);
+
+CREATE TABLE User (
+    User_id VARCHAR(255) PRIMARY KEY,
+    Name VARCHAR(255),
+    Department VARCHAR(255),
+    Phone_number VARCHAR(255),
+    Password VARCHAR(255),
+    role VARCHAR(255)
+);
+
+CREATE TABLE Admin (
+    Admin_id VARCHAR(255) PRIMARY KEY,
+    Name VARCHAR(255),
+    Password VARCHAR(255),
+    Privilege VARCHAR(255)
+);
+
+CREATE TABLE Classroom (
+    Room_id VARCHAR(255) PRIMARY KEY,
+    Building VARCHAR(255),
+    Room_no VARCHAR(255),
+    is_available BOOLEAN
+);
+
+CREATE TABLE Key_Assignment (
+    Date_ DATE,
+    Taking_time TIME,
+    Returning_time TIME,
+    User_id VARCHAR(255),
+    Room_id VARCHAR(255),
+    Box_key BOOLEAN,
+    is_verified BOOLEAN,
+    FOREIGN KEY (User_id) REFERENCES User(User_id),
+    FOREIGN KEY (Room_id) REFERENCES Classroom(Room_id)
+);
+
+
+USER:
+
+INSERT INTO User VALUES ('B20123CS', 'Amritha H Prabhu', 'CS', '1234567890', '1234', 'student');
+INSERT INTO User VALUES ('B21145CH', 'Tejaswini R', 'CHEM', '1234567891', '1234', 'student');
+INSERT INTO User VALUES ('B22167EE', 'Hotha Durga Swetha', 'EEE', '1234567892', '1234', 'student');
+INSERT INTO User VALUES ('B20189BT', 'Arathi K', 'Biotech', '1234567893', '1234', 'student');
+INSERT INTO User VALUES ('B21321ME', 'Vaisakh Ramachandran', 'MECH', '1234567894', '1234', 'student');
+INSERT INTO User VALUES ('B20234EC', 'Jackson Stephan', 'ECE', '1234567895', '1234', 'student');
+INSERT INTO User VALUES ('B21256CS', 'G Gautham Krishna', 'CS', '1234567896', '1234', 'student');
+INSERT INTO User VALUES ('B22345CE', 'Sreeranjini S', 'CIVIL', '1234567897', '1234', 'student');
+INSERT INTO User VALUES ('B23367EE', 'Vandkadoth Gayathri', 'EEE', '1234567898', '1234', 'student');
+INSERT INTO User VALUES ('B21389BT', 'Rakshith Rao', 'Biotech', '1234567899', '1234', 'student');
+INSERT INTO User VALUES ('B20456CS', 'Rhuthuvarna S P', 'CS', '1234578901', '1234', 'student');
+INSERT INTO User VALUES ('B21567CE', 'V G Vaishali', 'CIVIL', '1234578902', '1234', 'student');
+INSERT INTO User VALUES ('B22678EE', 'Aaron Joseph', 'EEE', '1234578903', '1234', 'student');
+INSERT INTO User VALUES ('B23789BT', 'Sidharth Deepesh', 'Biotech', '1234578904', '1234', 'student');
+INSERT INTO User VALUES ('B24890ME', 'Natasha Das', 'MECH', '1234578905', '1234', 'student');
+INSERT INTO User VALUES ('B20501CS', 'Mukesh Rai', 'CS', '1234578906', '1234', 'student');
+INSERT INTO User VALUES ('B21512CH', 'Pooja Sharma', 'CHEM', '1234578907', '1234', 'student');
+INSERT INTO User VALUES ('B22523EE', 'Rohan Nair', 'EEE', '1234578908', '1234', 'student');
+INSERT INTO User VALUES ('B23534BT', 'Sneha Iyer', 'Biotech', '1234578909', '1234', 'student');
+INSERT INTO User VALUES ('B24545ME', 'Vishal Gupta', 'MECH', '1234578910', '1234', 'student');
+INSERT INTO User VALUES ('B24545ME', 'Vishal Gupta', 'MECH', '1234578910', '1234', 'student');
+INSERT INTO User VALUES ('B20556EC', 'Lakshmi Menon', 'ECE', '1234578911', '1234', 'student');
+INSERT INTO User VALUES ('B21567CS', 'Aditya Kumar', 'CS', '1234578912', '1234', 'student');
+INSERT INTO User VALUES ('B22578CH', 'Meera Singh', 'CHEM', '1234578913', '1234', 'student');
+INSERT INTO User VALUES ('B23589EE', 'Nikhil Patil', 'EEE', '1234578914', '1234', 'student');
+INSERT INTO User VALUES ('B24590BT', 'Kavya Reddy', 'Biotech', '1234578915', '1234', 'student');
+INSERT INTO User VALUES ('B20601CS', 'Anirudh Joshi', 'CS', '1234578916', '1234', 'student');
+INSERT INTO User VALUES ('B21612CE', 'Ritika Agarwal', 'CIVIL', '1234578917', '1234', 'student');
+INSERT INTO User VALUES ('B22623EE', 'Karan Malhotra', 'EEE', '1234578918', '1234', 'student');
+INSERT INTO User VALUES ('B23634BT', 'Ananya Chatterjee', 'Biotech', '1234578919', '1234', 'student');
+INSERT INTO User VALUES ('B24645ME', 'Bhavesh Patel', 'MECH', '1234578920', '1234', 'student');
+INSERT INTO User VALUES ('B20656EC', 'Priyanka Varma', 'ECE', '1234578921', '1234', 'student');
+INSERT INTO User VALUES ('B21667CS', 'Rahul Menon', 'CS', '1234578922', '1234', 'student');
+INSERT INTO User VALUES ('B22678CE', 'Swetha Naidu', 'CIVIL', '1234578923', '1234', 'student');
+INSERT INTO User VALUES ('B23689EE', 'Jatin Sareen', 'EEE', '1234578924', '1234', 'student');
+INSERT INTO User VALUES ('B24690BT', 'Divya Paul', 'Biotech', '1234578925', '1234', 'student');
+
+INSERT INTO User VALUES ('T1CS', 'Rohit Sharma', 'CS', '9876512342', '1234', 'teacher');
+INSERT INTO User VALUES ('T2CS', 'Krishna Reddy', 'CS', '9876512348', '1234', 'teacher');
+INSERT INTO User VALUES ('T3CS', 'Bhuvanesh Dubey', 'CS', '9876523452', '1234', 'teacher');
+INSERT INTO User VALUES ('T4CS', 'Sushant Singh', 'CS', '9876523458', '1234', 'teacher');
+
+INSERT INTO User VALUES ('T1EC', 'Anjali Krishnan', 'ECE', '9876512341', '1234', 'teacher');
+INSERT INTO User VALUES ('T2EC', 'Rajni Gupta', 'ECE', '9876512347', '1234', 'teacher');
+INSERT INTO User VALUES ('T3EC', 'Radhika Desai', 'ECE', '9876523451', '1234', 'teacher');
+INSERT INTO User VALUES ('T4EC', 'Geeta Kapoor', 'ECE', '9876523457', '1234', 'teacher');
+
+INSERT INTO User VALUES ('T1CE', 'Poonam Bhatt', 'CHEM', '9876512343', '1234', 'teacher');
+INSERT INTO User VALUES ('T2CE', 'Kiran Kulkarni', 'CHEM', '9876512349', '1234', 'teacher');
+INSERT INTO User VALUES ('T3CE', 'Nandini Patel', 'CHEM', '9876523453', '1234', 'teacher');
+INSERT INTO User VALUES ('T4CE', 'Rima Sen', 'CHEM', '9876523459', '1234', 'teacher');
+
+INSERT INTO User VALUES ('T1EE', 'Kishore Kumar', 'EEE', '9876512344', '1234', 'teacher');
+INSERT INTO User VALUES ('T2EE', 'Lalita Rao', 'EEE', '9876512350', '1234', 'teacher');
+INSERT INTO User VALUES ('T3EE', 'Karan Oberoi', 'EEE', '9876523454', '1234', 'teacher');
+INSERT INTO User VALUES ('T4EE', 'Vinod Kumar', 'EEE', '9876523460', '1234', 'teacher');
+
+INSERT INTO User VALUES ('T1BT', 'Rekha Suresh', 'Biotech', '9876512345', '1234', 'teacher');
+INSERT INTO User VALUES ('T2BT', 'Brijesh Kumar', 'Biotech', '9876512351', '1234', 'teacher');
+INSERT INTO User VALUES ('T3BT', 'Shreya Ghoshal', 'Biotech', '9876523455', '1234', 'teacher');
+INSERT INTO User VALUES ('T4BT', 'Shefali Alvaris', 'Biotech', '9876523461', '1234', 'teacher');
+
+INSERT INTO User VALUES ('T1ME', 'Sanjay Verma', 'MECH', '9876512340', '1234', 'teacher');
+INSERT INTO User VALUES ('T2ME', 'Mohanlal Joshi', 'MECH', '9876512346', '1234', 'teacher');
+INSERT INTO User VALUES ('T3ME', 'Vijay Prakash', 'MECH', '9876523450', '1234', 'teacher');
+INSERT INTO User VALUES ('T4ME', 'Lalit Mohan', 'MECH', '9876523456', '1234', 'teacher');
+
+
+
+
+ADMIN:
+INSERT INTO Admin VALUES ('A1', 'Rajashekar Naidu', '7890', 'admin');
+INSERT INTO Admin VALUES ('A2', 'Sreelakshmi Raj', '7890', 'admin');
+INSERT INTO Admin VALUES ('A3', 'Rishit Kumar Chordia', '7890', 'admin');
+INSERT INTO Admin VALUES ('A4', 'Rahul Jeevan Singh', '7890', 'admin');
+
+
+
+CLASSROOM:
+INSERT INTO Classroom VALUES ('R100', 'ELHC', '101', TRUE);
+INSERT INTO Classroom VALUES ('R101', 'ELHC', '102', TRUE);
+INSERT INTO Classroom VALUES ('R102', 'ELHC', '103', FALSE);
+INSERT INTO Classroom VALUES ('R103', 'ELHC', '104', TRUE);
+INSERT INTO Classroom VALUES ('R104', 'ELHC', '201', TRUE);
+INSERT INTO Classroom VALUES ('R105', 'ELHC', '202', TRUE);
+INSERT INTO Classroom VALUES ('R106', 'ELHC', '203', FALSE);
+INSERT INTO Classroom VALUES ('R107', 'ELHC', '204', TRUE);
+INSERT INTO Classroom VALUES ('R108', 'ELHC', '301', TRUE);
+INSERT INTO Classroom VALUES ('R109', 'ELHC', '302', TRUE);
+INSERT INTO Classroom VALUES ('R110', 'ELHC', '303', FALSE);
+INSERT INTO Classroom VALUES ('R111', 'ELHC', '304', TRUE);
+INSERT INTO Classroom VALUES ('R112', 'ELHC', '401', FALSE);
+INSERT INTO Classroom VALUES ('R113', 'ELHC', '402', TRUE);
+INSERT INTO Classroom VALUES ('R114', 'ELHC', '403', TRUE);
+INSERT INTO Classroom VALUES ('R115', 'ELHC', '404', TRUE);
+INSERT INTO Classroom VALUES ('R116', 'NLHC', '101', TRUE);
+INSERT INTO Classroom VALUES ('R117', 'NLHC', '102', TRUE);
+INSERT INTO Classroom VALUES ('R118', 'NLHC', '103', FALSE);
+INSERT INTO Classroom VALUES ('R119', 'NLHC', '104', TRUE);
+INSERT INTO Classroom VALUES ('R120', 'NLHC', '201', TRUE);
+INSERT INTO Classroom VALUES ('R121', 'NLHC', '202', TRUE);
+INSERT INTO Classroom VALUES ('R122', 'NLHC', '203', FALSE);
+INSERT INTO Classroom VALUES ('R123', 'NLHC', '204', TRUE);
+INSERT INTO Classroom VALUES ('R124', 'NLHC', '301', TRUE);
+INSERT INTO Classroom VALUES ('R125', 'NLHC', '302', TRUE);
+INSERT INTO Classroom VALUES ('R126', 'NLHC', '303', FALSE);
+INSERT INTO Classroom VALUES ('R127', 'NLHC', '304', TRUE);
+INSERT INTO Classroom VALUES ('R128', 'NLHC', '401', FALSE);
+INSERT INTO Classroom VALUES ('R129', 'NLHC', '402', TRUE);
+INSERT INTO Classroom VALUES ('R130', 'NLHC', '403', TRUE);
+INSERT INTO Classroom VALUES ('R131', 'NLHC', '404', TRUE);
+INSERT INTO Classroom VALUES ('R132', 'MB', '101', TRUE);
+INSERT INTO Classroom VALUES ('R133', 'MB', '201', TRUE);
+INSERT INTO Classroom VALUES ('R134', 'MB', '301', TRUE);
+
+HALL:
+
+INSERT INTO Hall VALUES ('H1', 'Auditorium', 'Location1');
+INSERT INTO Hall VALUES ('H2', 'Aryabhatta', 'Location2');
+INSERT INTO Hall VALUES ('H3', 'Chanakya', 'Location1');
+INSERT INTO Hall VALUES ('H4', 'Bhaskara', 'Location2');
+INSERT INTO Hall VALUES ('H5', 'CSED Seminar', 'CSED Building');
+INSERT INTO Hall VALUES ('H6', 'ECED', 'Location2');
+INSERT INTO Hall VALUES ('H7', 'EED', 'DB');
+INSERT INTO Hall VALUES ('H8', 'MED', 'Location2');
+INSERT INTO Hall VALUES ('H9', 'CED', 'Location1');
+INSERT INTO Hall VALUES ('H10', 'CHED', 'Location2');
+INSERT INTO Hall VALUES ('H11', 'BTED', 'Location1');
+INSERT INTO Hall VALUES ('H12', 'PROD', 'Location2');
+INSERT INTO Hall VALUES ('H13', 'APJ', 'CSED Building');
+INSERT INTO Hall VALUES ('H14', 'SOMS Auditorium', 'Location2');
+INSERT INTO Hall VALUES ('H15', 'OAT', 'Location1');
+
+
+HALL BOOKING:
+INSERT INTO Hall_Booking VALUES ('2023-10-20', '09:00:00', '11:00:00', 'H9', 'B22345CE', TRUE);
+INSERT INTO Hall_Booking VALUES ('2023-10-21', '10:00:00', '12:00:00', 'H5', 'B20601CS', TRUE);
+INSERT INTO Hall_Booking VALUES ('2023-10-22', '13:00:00', '15:00:00', 'H3', 'B21578EC', FALSE);
+INSERT INTO Hall_Booking VALUES ('2023-10-23', '14:00:00', '16:00:00', 'H7', 'B23090EE', TRUE);
+INSERT INTO Hall_Booking VALUES ('2023-10-24', '11:00:00', '13:00:00', 'H2', 'B22023BT', FALSE);
+INSERT INTO Hall_Booking VALUES ('2023-10-25', '09:30:00', '11:30:00', 'H4', 'B24567ME', TRUE);
+
+
+
+KEY ASSIGNMENT:
+INSERT INTO Key_Assignment VALUES ('2023-10-20', '08:00:00', '9:00:00', 'B20123CS', 'R102', TRUE, FALSE);
+INSERT INTO Key_Assignment VALUES ('2023-10-21', '09:00:00', '10:00:00', 'B21256CS', 'R106', TRUE, FALSE);
+INSERT INTO Key_Assignment VALUES ('2023-10-22', '8:00:00', '9:00:00', 'B20456CS', 'R107', TRUE, TRUE);
+INSERT INTO Key_Assignment VALUES ('2023-10-23', '11:00:00', '12:00:00', 'B20501CS', 'R112', TRUE, FALSE);
+INSERT INTO Key_Assignment VALUES ('2023-10-24', '9:00:00', '10:00:00', 'B22345CE', 'R126', TRUE, TRUE);
+INSERT INTO Key_Assignment VALUES ('2023-10-25', '10:00:00', '11:00:00', 'B23367EE', 'R109', TRUE, FALSE);
+
+
+

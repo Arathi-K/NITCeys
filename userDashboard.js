@@ -10,12 +10,43 @@ router.use(cookieParser());
 let cookieObj = "";
 router.use(bodyParser.urlencoded({ extended: true }));
 
+
+function renderList(data) {
+  let selectHTML = '';
+ /* <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                CSED Seminar Hall
+                                                
+                                            </li> -->*/
+  // Add options based on the data
+  data.forEach(item => {
+    selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `${item.Hall_name}` + '<a href="/UI/bookHall.html"><button class="btn btn-primary">Book Hall</button></a></li>'  ;
+  });
+  return selectHTML;
+}
+
 router.get('/UI/studentdashboard.html', (req, res) => {
   const cookieName = req.cookies.user;
   cookieObj = JSON.parse(cookieName);
   console.log(cookieObj[0].User_id);  //this accesses the roll number alone.
-  res.sendFile(path.join(__dirname, 'UI', 'studentdashboard.html'));
-});
+  const htmlFilePath = path.join(__dirname, 'UI', 'studentdashboard.html')
+  fs.readFile(htmlFilePath, 'utf-8', (err,data)=>{
+    if(err) throw err;
+    let modifiedHTML = data
+    const query = 'SELECT Hall_name FROM hall';
+    con.query(query, (err, results) => {
+    if (err) {
+      throw err;
+    } else {
+      html = renderList(results)
+      console.log(html);
+
+      modifiedHTML = modifiedHTML.replace('{{halls}}', html)
+      res.send(modifiedHTML);
+
+    }
+  } )
+  // res.sendFile(path.join(__dirname, 'UI', 'studentdashboard.html'));
+})})
 
 router.get('/UI/changePassword.html', (req, res) => {
   const u = req.cookies.user;
@@ -93,6 +124,24 @@ router.get('/UI/profileDetails.html', (req, res) => {
     
   });
 });
+
+router.get("/UI/bookHall.html", (req, res)=>{
+    const cookieName = req.cookies.user;
+    cookieObj = JSON.parse(cookieName);
+    let attributes = Object.keys(cookieObj[0]).length
+    const htmlFilePath = path.join(__dirname, 'UI', 'bookHall.html');
+    fs.readFile(htmlFilePath, 'utf8', (err, data) => {
+    if (err) throw err
+    let modifiedHtml = data;
+    if(attributes===4){
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/adminDashboard.html")
+    }else{
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
+    }
+    res.send(modifiedHtml);
+  });
+    
+  })
 
 router.post("/change", (req, res) => {
   var currentPassword = req.body.curr;

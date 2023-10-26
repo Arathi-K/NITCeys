@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 const cookieParser = require('cookie-parser')
-const fs = require('fs');
+// const fs = require('fs');
 router.use(cookieParser());
 let cookieObj = "";
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -38,10 +38,16 @@ router.get('/UI/profileDetails.html', (req, res) => {
   const cookieName = req.cookies.user;
   cookieObj = JSON.parse(cookieName);
   console.log("profile page print", cookieObj[0]);
+  let attributes = Object.keys(cookieObj[0]).length
   const htmlFilePath = path.join(__dirname, 'UI', 'profileDetails.html');
   fs.readFile(htmlFilePath, 'utf8', (err, data) => {
     if (err) throw err
     let modifiedHtml = data;
+    if(attributes===4){
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/adminDashboard.html")
+    }else{
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
+    }
     if (cookieObj[0].role == 'student'){
       modifiedHtml = modifiedHtml.replace('{{TYPE_OF_ID}}', 'Roll No');
       const placeholders = {
@@ -81,6 +87,7 @@ router.get('/UI/profileDetails.html', (req, res) => {
         }
         modifiedHtml = modifiedHtml.replace(`{{${placeholder}}}`, placeholders[placeholder]);
       }
+
       res.send(modifiedHtml);
     }
     

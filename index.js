@@ -52,7 +52,6 @@ app.post('/', (req, res) => {
         res.send(alertScript);
       } else {
         var queryHash = JSON.stringify(result);
-        console.log(queryHash);
         res.cookie("user",queryHash);
         res.redirect('/UI/adminDashboard.html');
       }

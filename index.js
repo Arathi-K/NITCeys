@@ -5,6 +5,12 @@ const { exec } = require('child_process');
 const app = express();
 const port = 8080;
 const http = require('http');
+// const session = require('express-session');
+const userdashboardRoutes = require('./userDashboard'); 
+const { log } = require('console');
+
+console.log("hi",app);
+app.use('/userdashboard', userdashboardRoutes);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/UI', express.static(path.join(__dirname, 'UI')));
@@ -33,14 +39,15 @@ app.listen(port, () => {
 });
 
 app.post('/', (req, res) => {
-  var username = req.body.username.trim();
-  var password = req.body.password.trim();
+  const username = req.body.username.trim();
+  const password = req.body.password.trim();
+  const role = req.body.role;
+  
   if (username[0] === 'A') {
     var sqlQuery = "select * from admin where Admin_id = ? and Password = ?";
     con.query(sqlQuery, [username, password], function (err, result) {
       if (err) throw err;
       if (result.length == 0) {
-        // res.send("User doesnt exist");
         const alertScript = `<script>alert('User does not exist.');window.location.href = '/UI/login.html';</script>`;
         res.send(alertScript);
       } else {
@@ -48,8 +55,8 @@ app.post('/', (req, res) => {
       }
     });
   } else {
-    var sqlQuery = "select * from user where User_id = ? and Password = ?";
-    con.query(sqlQuery, [username, password], function (err, result) {
+    var sqlQuery = "select * from user where User_id = ? and Password = ? and role = ?";
+    con.query(sqlQuery, [username, password, role], function (err, result) {
       if (err) throw err;
       if (result.length == 0) {
         // res.send("User doesnt exist");
@@ -62,3 +69,4 @@ app.post('/', (req, res) => {
     });
   }
 })
+module.exports = app;

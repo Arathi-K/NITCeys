@@ -1,17 +1,17 @@
 const con = require('./dbconnection');
 const express = require('express');
+const cookieParser = require('cookie-parser')
 const path = require('path');
 const { exec } = require('child_process');
 const app = express();
 const port = 8080;
 const http = require('http');
-// const session = require('express-session');
+
 const userdashboardRoutes = require('./userDashboard'); 
 const { log } = require('console');
 
-console.log("hi",app);
-app.use('/userdashboard', userdashboardRoutes);
-
+app.use('', userdashboardRoutes);
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/UI', express.static(path.join(__dirname, 'UI')));
 app.use(express.urlencoded({ extended: true }));
@@ -59,11 +59,11 @@ app.post('/', (req, res) => {
     con.query(sqlQuery, [username, password, role], function (err, result) {
       if (err) throw err;
       if (result.length == 0) {
-        // res.send("User doesnt exist");
         const alertScript = `<script>alert('User does not exist.');window.location.href = '/UI/login.html';</script>`;
         res.send(alertScript);
       } else {
-        // res.send("Data received");
+        var queryHash = JSON.stringify(result);
+        res.cookie("user",queryHash);
         res.redirect('/UI/studentdashboard.html');
       }
     });

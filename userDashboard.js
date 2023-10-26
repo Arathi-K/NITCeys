@@ -19,10 +19,11 @@ function renderList(data) {
                                             </li> -->*/
   // Add options based on the data
   data.forEach(item => {
-    selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `${item.Hall_name}` + '<a href="/UI/bookHall.html"><button class="btn btn-primary">Book Hall</button></a></li>'  ;
+    selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `${item.Hall_name}` + '<form action="/UI/bookHall.html" method="get"><div class="form-group"><input type="text" hidden name="hallName" value="' + `${item.Hall_name}` + '"></div><button class="btn btn-primary">Book Hall</button></form></li>'  ;
   });
   return selectHTML;
 }
+
 
 router.get('/UI/studentdashboard.html', (req, res) => {
   const cookieName = req.cookies.user;
@@ -38,8 +39,6 @@ router.get('/UI/studentdashboard.html', (req, res) => {
       throw err;
     } else {
       html = renderList(results)
-      console.log(html);
-
       modifiedHTML = modifiedHTML.replace('{{halls}}', html)
       res.send(modifiedHTML);
 
@@ -125,6 +124,8 @@ router.get('/UI/profileDetails.html', (req, res) => {
   });
 });
 
+let currentHallName = "";
+
 router.get("/UI/bookHall.html", (req, res)=>{
     const cookieName = req.cookies.user;
     cookieObj = JSON.parse(cookieName);
@@ -138,17 +139,58 @@ router.get("/UI/bookHall.html", (req, res)=>{
     }else{
       modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
     }
+    currentHallName = req.query.hallName;
+    modifiedHtml = modifiedHtml.replace('{{SELECTED_ROOM}}', '<p> Selected Room : ' + `${currentHallName}` + '</p>');
     res.send(modifiedHtml);
-  });
-    
+  });   
   })
+
+router.post("/book", (req, res) => {
+  const date = req.body.date;
+  const startTime = req.body.startTime;
+  const endTime = req.body.endTime;
+  const reason = req.body.reason;
+  console.log('booking',currentHallName)
+  if(endTime <= startTime){
+    const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
+    return res.send(alert);
+  }
+  var sqlQuery = "select hall_id from hall where hall_name = '" + currentHallName + "';";
+  var hall_id = "";
+  con.query(sqlQuery, function(err, results){
+    if(err) throw err;
+    console.log(results[0].hall_id);
+    hall_id = results[0].hall_id;
+    sqlQuery = "select * from hall_booking where date_ = ? and start_time = ? and end_time = ? and hall_id = ? and is_approved = 1";
+    con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
+      if(err) throw err;
+      if(results.length == 0){
+        sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
+        con.query(sqlQuery, [date, startTime,startTime,hall_id], function(err, results){
+          if(err) throw err;
+          if(results.length == 0){
+            const alert = `<script>alert('The hall is free.');window.history.back();</script>`
+            res.send(alert);
+          } else {
+            const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+            res.send(alert);
+          }
+        })
+      } else {
+        console.log(results);
+        const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+        res.send(alert);
+      }
+    })
+  })
+});
 
 router.post("/change", (req, res) => {
   var currentPassword = req.body.curr;
   var newPassword = req.body.new;
   var confirmPassword = req.body.confirm;
   if(currentPassword!=cookieObj[0].Password){
-    const alert = `<script>alert('Your password doesnt match with the existing password'); window.location.href = '/UI/changePassword.html';</script>`
+    const alert = `<script>alert('Your password doesn't match with the existing password'); window.location.href = '/UI/changePassword.html';</script>`
     res.send(alert);
   }else{
     if(newPassword===confirmPassword){
@@ -159,8 +201,7 @@ router.post("/change", (req, res) => {
         if(err) throw err;
         const alert = `<script>alert('Your password has been updated'); window.location.href = '/UI/studentdashboard.html';</script>`;
         cookieObj[0].Password = newPassword;
-        res.send(alert);
-        
+        res.send(alert); 
       })
       }else{
         var sqlQuery = "update user set Password=? where User_id = ?";
@@ -169,7 +210,6 @@ router.post("/change", (req, res) => {
         const alert = `<script>alert('Your password has been updated'); window.location.href = '/UI/studentdashboard.html';</script>`;
         cookieObj[0].Password = newPassword;
         res.send(alert);
-        
       })
       }
       

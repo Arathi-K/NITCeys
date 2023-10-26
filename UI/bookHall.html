@@ -68,22 +68,23 @@
                         <h2 class="card-title">Book Hall</h2>
                         <!-- Add a form here for changing the password -->
                         <form action="/book" method="post">
+                            {{SELECTED_ROOM}}
                             <div class="form-group text-left">
                                 <label for="new-password">Date</label><span>*</span>
-                                <input type="Date" class="form-control" id="new-password" required>
+                                <input type="Date" class="form-control" id="new-password" name ="date" required>
                             </div>
                             <div class="form-group text-left">
                                 <label for="confirm-new-password">Start Time</label><span>*</span>
-                                <input type="number" class="form-control" id="confirm-new-password" required>
+                                <input type="time" class="form-control" id="confirm-new-password" name="startTime" required>
                             </div>
                             <div class="form-group text-left">
                                 <label for="confirm-new-password">End Time</label><span>*</span>
-                                <input type="number" class="form-control" id="confirm-new-password" required>
+                                <input type="time" class="form-control" id="confirm-new-password" name="endTime" required>
                             </div>
                             <div class="form-group text-left">
                                 <label for="confirm-new-password" >Reason</label><span>*</span>
                                 <br>
-                                <textarea name="" id="" cols="56" rows="3" required></textarea>
+                                <textarea name="reason" id="" cols="56" rows="3" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary">Request</button>
                         </form>

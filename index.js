@@ -51,6 +51,9 @@ app.post('/', (req, res) => {
         const alertScript = `<script>alert('User does not exist.');window.location.href = '/UI/login.html';</script>`;
         res.send(alertScript);
       } else {
+        var queryHash = JSON.stringify(result);
+        console.log(queryHash);
+        res.cookie("user",queryHash);
         res.redirect('/UI/adminDashboard.html');
       }
     });

@@ -198,6 +198,13 @@ router.post("/book", (req, res) => {
   const endTime = req.body.endTime;
   const reason = req.body.reason;
   console.log('booking',currentHallName)
+  var loggedInUser = "";
+  if(cookieObj[0].Privilege == 'admin'){
+    loggedInUser = cookieObj[0].Admin_id;
+  } else {
+    loggedInUser = cookieObj[0].User_id;
+  }
+  console.log('logged in as', loggedInUser);
   if(endTime <= startTime){
     const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
     return res.send(alert);
@@ -216,8 +223,35 @@ router.post("/book", (req, res) => {
         con.query(sqlQuery, [date, startTime,startTime,hall_id], function(err, results){
           if(err) throw err;
           if(results.length == 0){
-            const alert = `<script>alert('The hall is free.');window.history.back();</script>`
-            res.send(alert);
+            sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
+            con.query(sqlQuery, [date, endTime,endTime,hall_id], function(err, results){
+              if(err) throw err;
+              if(results.length == 0){
+                sqlQuery = "select * from hall_booking where date_ = ? and start_time > ? and end_time < ? and hall_id = ? and is_approved = 1";
+                con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
+                  if(err) throw err;
+                  if(results.length == 0){
+                    sqlQuery = "insert into hall_booking values (?,?,?,?,?,0);";
+                    con.query(sqlQuery, [date,startTime,endTime,hall_id,loggedInUser], function(err, results){
+                    if(err) throw err;
+                    if(cookieObj[0].Privilege == 'admin'){
+                      const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/adminDashboard.html';</script>`;
+                      res.send(alert);
+                    } else {
+                      const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/studentdashboard.html';</script>`;
+                      res.send(alert);
+                    }  
+                  })
+                  } else {
+                    const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+                    res.send(alert);
+                  }
+                })
+              } else {
+                const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+                res.send(alert);
+              }
+            })
           } else {
             const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
             res.send(alert);

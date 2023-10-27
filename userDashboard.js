@@ -4,7 +4,10 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const { Console } = require('console');
+const { promisify } = require('util');
+
 // const fs = require('fs');
 router.use(cookieParser());
 let cookieObj = "";
@@ -13,17 +16,25 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 function renderList(data) {
   let selectHTML = '';
- /* <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                CSED Seminar Hall
-                                                
-                                            </li> -->*/
-  // Add options based on the data
   data.forEach(item => {
     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `${item.Hall_name}` + '<form action="/UI/bookHall.html" method="get"><div class="form-group"><input type="text" hidden name="hallName" value="' + `${item.Hall_name}` + '"></div><button class="btn btn-primary">Book Hall</button></form></li>'  ;
   });
   return selectHTML;
 }
 
+
+function renderKeyList(data){
+  let list = '';
+  data.forEach( item=>{
+    let btns = ["Return Key", "btn-primary"]
+    if(item.is_verified===1){
+      btns[0]="Returned"
+      btns[1]="btn-secondary"
+    }
+    list += '<li class="list-group-item d-flex justify-content-between align-items-center">'+ `${item.Building}` + ' ' + `${item.Room_no}`+ '<form action="/UI/transferKeys.html" method="get"><div class="form-group"><input type="text" hidden name="room" value="' + `${item.Room_id}` + '"></div><div class="btn-group"><button class="btn btn-primary">Transfer Key</button></div></form><form action="/returned" method="post"><div class="form-group"><input type="text" hidden name="class" value="' + `${item.Room_id}` + '"></div><div class="btn-group"><button class="btn '+ `${btns[1]}`+ ' ml-1">'+ `${btns[0]}`+'</button></div></form></li>'
+  });
+  return list;
+}
 
 router.get('/UI/studentdashboard.html', (req, res) => {
   const cookieName = req.cookies.user;
@@ -39,13 +50,21 @@ router.get('/UI/studentdashboard.html', (req, res) => {
       throw err;
     } else {
       html = renderList(results)
-      modifiedHTML = modifiedHTML.replace('{{halls}}', html)
-      res.send(modifiedHTML);
-
+      modifiedHTML = modifiedHTML.replace('{{halls}}', html);
     }
+    const keyQuery = "select is_verified, Building, Room_no, classroom.Room_id from classroom, key_assignment where classroom.Room_id in (select Room_id from key_assignment where User_id=?) and classroom.Room_id = key_assignment.Room_id"
+    con.query(keyQuery, [cookieObj[0].User_id], (err, results)=>{
+      if(err) throw err;
+      html = renderKeyList(results);
+      console.log(html)
+      modifiedHTML = modifiedHTML.replace('{{KEYS}}', html);
+      res.send(modifiedHTML);
+    })
+    
   } )
   // res.sendFile(path.join(__dirname, 'UI', 'studentdashboard.html'));
 })})
+
 
 router.get('/UI/changePassword.html', (req, res) => {
   const u = req.cookies.user;
@@ -125,7 +144,7 @@ router.get('/UI/profileDetails.html', (req, res) => {
 });
 
 let currentHallName = "";
-
+let currentRoom = "";
 router.get("/UI/bookHall.html", (req, res)=>{
     const cookieName = req.cookies.user;
     cookieObj = JSON.parse(cookieName);
@@ -144,7 +163,35 @@ router.get("/UI/bookHall.html", (req, res)=>{
     res.send(modifiedHtml);
   });   
   })
+  router.get("/UI/transferKeys.html", (req, res)=>{
+    const cookieName = req.cookies.user;
+    cookieObj = JSON.parse(cookieName);
+    let attributes = Object.keys(cookieObj[0]).length
+    const htmlFilePath = path.join(__dirname, 'UI', 'transferKeys.html');
+    fs.readFile(htmlFilePath, 'utf8', (err, data) => {
+    if (err) throw err
+    let modifiedHtml = data;
+    if(attributes===4){
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/adminDashboard.html")
+    }else{
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
+    }
+    currentRoom = req.query.room;
+    var query = "SELECT Building, Room_no from classroom where Room_id = ?"
+    con.query(query,[currentRoom],(err, results)=>{
+      if(err) throw err
+      if(results.length===0){
 
+      }else{
+      modifiedHtml = modifiedHtml.replace('{{CLASSROOM}}', '<p> Selected Room : ' + `${results[0].Building}` + ' '+`${results[0].Room_no}`+ '</p>');
+      res.send(modifiedHtml);
+      }
+    })
+    
+    
+   })
+   
+  })
 router.post("/book", (req, res) => {
   const date = req.body.date;
   const startTime = req.body.startTime;
@@ -221,4 +268,42 @@ router.post("/change", (req, res) => {
   
 });
 
+router.post("/transfer",(req,resp)=>{
+   const date = req.body.theDate
+   const time = req.body.Time
+   const phoneNo = req.body.phone
+   console.log(currentRoom)
+   const regex = /^\d{10}$/; // Regular expression to match exactly 10 digits
+   if (regex.test(phoneNo)) {
+    const phoneQuery = "Select User_id from user where Phone_number = ?"
+    con.query(phoneQuery, [phoneNo], (err,results)=>{
+      if(err) throw err
+      console.log(results);
+      if(results.length===0){
+        const alert =`<script>alert('Phone no entered is incorrect'); window.history.back();</script>`;
+        resp.send(alert)
+      }else{
+        const updateQuery = "Update key_assignment set Date_ = ? ,Taking_time = ? , User_id = ? where Room_id = ?"
+        con.query(updateQuery,[date,time,results[0].User_id,currentRoom],(err, results)=>{
+          if(err) throw err
+          const alert = `<script>alert('The key has been transferred'); window.location.href = '/UI/studentdashboard.html';</script>`
+          resp.send(alert)
+        })
+      }
+    })
+  } else {
+     const alert =`<script>alert('Phone no should contain 10 digits'); window.location.href = '/UI/transferKeys.html';</script>`;
+     resp.send(alert)
+  }
+   
+})
+router.post("/returned",(req,res)=>{
+    let room = req.body.class;
+    // console.log(req.body.class);
+    const query = "update key_assignment set is_verified = 1 where Room_id = ?"
+    con.query(query,[room],(err, results)=>{
+      const alert =`<script>alert('Key return request submitted. Please await approval.'); window.location.href = '/UI/studentdashboard.html';</script>`;
+      res.send(alert)
+    })
+})
 module.exports = router;

@@ -145,6 +145,23 @@ router.get("/UI/bookHall.html", (req, res)=>{
   });   
   })
 
+router.get("/UI/editPhoneNumber.html", (req, res)=>{
+  const cookieName = req.cookies.user;
+  cookieObj = JSON.parse(cookieName);
+  let attributes = Object.keys(cookieObj[0]).length
+  const htmlFilePath = path.join(__dirname, 'UI', 'editPhoneNumber.html');
+  fs.readFile(htmlFilePath, 'utf8', (err, data) => {
+  if (err) throw err
+  let modifiedHtml = data;
+  if(attributes===4){
+    modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/adminDashboard.html")
+  }else{
+    modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
+  }
+  res.send(modifiedHtml);
+});   
+})
+
 router.post("/book", (req, res) => {
   const date = req.body.date;
   const startTime = req.body.startTime;

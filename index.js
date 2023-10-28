@@ -15,7 +15,19 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/UI', express.static(path.join(__dirname, 'UI')));
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  res.header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next();
+});
 
+app.get('/logout', (req, res) => {
+  
+  res.clearCookie('user'); 
+  console.log("hi2")
+  res.redirect('/UI/login.html'); 
+});
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'UI', 'login.html'));
 });

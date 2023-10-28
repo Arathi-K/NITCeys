@@ -23,9 +23,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/logout', (req, res) => {
-  
   res.clearCookie('user'); 
-  console.log("hi2")
   res.redirect('/UI/login.html'); 
 });
 app.get('/', (req, res) => {

@@ -8,7 +8,6 @@ const cookieParser = require('cookie-parser');
 const { Console } = require('console');
 const { promisify } = require('util');
 
-// const fs = require('fs');
 router.use(cookieParser());
 let cookieObj = "";
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -98,8 +97,6 @@ router.get('/UI/studentdashboard.html', (req, res) => {
           
           modifiedHTML = modifiedHTML.replace('{{pending}}', html2)
         }
-      // const q3 = 'SELECT Hall_name FROM hall WHERE Hall_id IN (SELECT Hall_id FROM hall_booking WHERE is_approved=1 AND User_id=?)';
-      // con.query(q3,[cookieObj[0].User_id],(e, r) => {
         
       const q3 = 'SELECT hall.Hall_name, hall_booking.Date_, hall_booking.Start_time,hall_booking.End_time FROM hall INNER JOIN hall_booking ON hall.Hall_id = hall_booking.Hall_id WHERE hall_booking.is_approved =1 and User_id=?';
       con.query(q3,[cookieObj[0].User_id],(e, r) => {
@@ -117,14 +114,7 @@ router.get('/UI/studentdashboard.html', (req, res) => {
             html4 = renderClassroomList(r)
             modifiedHTML = modifiedHTML.replace('{{availroom}}', html4)
           }
-        const pendingKeyRequests = "select Building, Room_no from classroom where Room_id in (select Room_id from key_assignment where User_id = ? and is_verified =1)"
-        con.query(pendingKeyRequests,[cookieObj[0].User_id],(err,results)=>{
-          if(err) throw err
-          html5 = renderPendingKey(results)
-          modifiedHTML = modifiedHTML.replace('{{keyPending}}', html5)
           res.send(modifiedHTML);
-        })
-        
       })
     })
      

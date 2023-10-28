@@ -192,6 +192,23 @@ router.get("/UI/bookHall.html", (req, res)=>{
    })
    
   })
+router.get("/UI/editPhoneNumber.html", (req, res)=>{
+  const cookieName = req.cookies.user;
+  cookieObj = JSON.parse(cookieName);
+  let attributes = Object.keys(cookieObj[0]).length
+  const htmlFilePath = path.join(__dirname, 'UI', 'editPhoneNumber.html');
+  fs.readFile(htmlFilePath, 'utf8', (err, data) => {
+  if (err) throw err
+  let modifiedHtml = data;
+  if(attributes===4){
+    modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/adminDashboard.html")
+  }else{
+    modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
+  }
+  res.send(modifiedHtml);
+});   
+})
+
 router.post("/book", (req, res) => {
   const date = req.body.date;
   const startTime = req.body.startTime;
@@ -301,6 +318,44 @@ router.post("/change", (req, res) => {
   }
   
 });
+
+router.post("/changePhone", (req,res) => {
+  const cookieName = req.cookies.user;
+  cookieObj = JSON.parse(cookieName);
+  var currentPhone = req.body.currentPhone;
+  var newPhone = req.body.newPhone;
+  var confirmPhone = req.body.confirmNewPhone;
+  console.log('digits',newPhone.length)
+  if(currentPhone!=cookieObj[0].Phone_number){
+    const alert = `<script>alert('Incorrect current phone number.'); window.location.href = '/UI/editPhoneNumber.html';</script>`
+    res.send(alert);
+  } else if(newPhone.length != 10){
+    const alert = `<script>alert('Phone number needs to be 10 digits.'); window.location.href = '/UI/editPhoneNumber.html';</script>`
+    res.send(alert);
+  }else{
+    if(newPhone===confirmPhone){
+      cookieObj[0].Phone_number = newPhone;
+      var sqlQuery = "update user set Phone_number=? where User_id = ?";
+        con.query(sqlQuery, [newPhone, cookieObj[0].User_id], function(err, results){
+        if(err) throw err;
+        const alert = `<script>alert('Your phone number has been updated'); window.location.href = '/UI/profileDetails.html';</script>`;
+        var newQuery = "select * from user where User_id = ?";
+        con.query(newQuery, [cookieObj[0].User_id], function(err, results) {
+          if(err) throw err;
+          const newQueryHash = JSON.stringify(results);
+          res.cookie("user",newQueryHash);
+          res.send(alert);
+        })
+        // res.send(alert);
+       })
+    }else{
+      const alert = `<script>alert('The new phone numbers do not match.'); window.location.href = '/UI/editPhoneNumber.html';</script>`;
+      res.send(alert);
+    }
+  }
+})
+
+
 
 router.post("/transfer",(req,resp)=>{
    const date = req.body.theDate

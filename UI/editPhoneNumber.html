@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap Sidebar Template</title>
+    <title>Edit Phone Number</title>
     <!-- Include Bootstrap CSS link here -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -25,6 +25,7 @@
             margin-top: 25px;
         }
     </style>
+    <script src="../userDashboard.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-light" style="background-color: #a3e5fb; ">
@@ -43,11 +44,12 @@
                 <div class="position-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{LINK}}">Dashboard</a>
+                            <a class="nav-link" id="DashboardLinkUpdation" href={{LINK}}>Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="changePassword.html">Change Password</a>
+                            <a class="nav-link" href="profileDetails.html">Profile Details</a>
                         </li>
+                        
                         <!-- Add other sidebar options here -->
                     </ul>
                 </div>
@@ -57,35 +59,24 @@
             <!-- Main content area -->
             <main class="col-md-5 ms-sm-auto col-lg-4 justify-content-center main">
                 <!-- Change Password Form Inside Card -->
-                <h2 class="text-center">User Information</h2>
                 <div class="card mt-4 justify-content-center">
                     <div class="card-body text-center">
-                        
+                        <h2 class="card-title">Change Phone Number</h2>
                         <!-- Add a form here for changing the password -->
-                        <form action="/UI/editPhoneNumber.html" method="get">
-                            <div class="form-group">
-                                <h4>Name : {{NAME}}</h4>
+                        <form action="/changePhone" method="post">
+                            <div class="form-group text-left">
+                                <label for="current-phone">Current Phone Number</label>
+                                <input type="number" class="form-control" name="currentPhone" id="currentPhone" required="required">
                             </div>
-                            <br>
-                            <div class="form-group">
-                                <h4>{{TYPE_OF_ID}} : {{USER_ID}}</h4>
+                            <div class="form-group text-left">
+                                <label for="new-phone">New Phone Number</label>
+                                <input type="number" class="form-control" id="newPhone" name="newPhone" required="required">
                             </div>
-                            <br>
-                            <div class="form-group">
-                                <h4>Phone No : {{PHONE}}</h4>
+                            <div class="form-group text-left">
+                                <label for="confirm-new-phone">Confirm New Phone Number</label>
+                                <input type="number" class="form-control" id="confirmNewPhone" name="confirmNewPhone" required="required">
                             </div>
-                            <br>
-                            <div class="form-group">
-                                <h4>Role : {{ROLE}}</h4>
-                            </div>
-                            <br>
-                            <!-- <form action="/UI/editPhoneNumber.html" method="get"> -->
-                                <button  type="submit" class="btn btn-primary">Edit</button>
-                            <!-- </form> -->
-                            <!-- <a href="/UI/editPhoneNumber.html">
-                                <button type="submit" class="btn btn-primary">Edit</button>
-                            </a>                             -->
-                            <!-- <button type="submit" class="btn btn-primary">Edit</button> -->
+                            <button type="submit" class="btn btn-primary">Change Phone Number</button>
                         </form>
                     </div>
                 </div>
@@ -94,4 +85,5 @@
     </div>
     <!-- Include Bootstrap and other necessary scripts and styles -->
 </body>
+
 </html>

@@ -4,7 +4,8 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const { Console } = require('console');
 // const fs = require('fs');
 router.use(cookieParser());
 let cookieObj = "";
@@ -13,18 +14,33 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 function renderList(data) {
   let selectHTML = '';
- /* <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                CSED Seminar Hall
-                                                
-                                            </li> -->*/
-  // Add options based on the data
   data.forEach(item => {
     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `${item.Hall_name}` + '<form action="/UI/bookHall.html" method="get"><div class="form-group"><input type="text" hidden name="hallName" value="' + `${item.Hall_name}` + '"></div><button class="btn btn-primary">Book Hall</button></form></li>'  ;
   });
   return selectHTML;
 }
+function renderPendingList(data){//add cancel request option
+  let selectHTML = '';
+   data.forEach(item => {
+     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `Hall Name: ${item.Hall_name} <br>Date: ${item.Date_} <br>Time: ${item.Start_time} - ${item.End_time}` + '</li>'  ;
+   });
+   return selectHTML;
+}
 
-
+function renderApprovedList(data){
+  let selectHTML = '';
+   data.forEach(item => {
+     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `Hall Name: ${item.Hall_name} <br>Date: ${item.Date_} <br>Time: ${item.Start_time} - ${item.End_time}` + '</li>'  ;
+   });
+   return selectHTML;
+}
+function renderClassroomList(data) {
+  let selectHTML = '';
+  data.forEach(item => {
+    selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `${item.Building}` +' '+ `${item.Room_no}`+'<form action="/UI/takeKey.html" method="get"><div class="form-group"><input type="text" hidden name="ClassID" value="' + `${item.Room_id}` + '"></div><button class="btn btn-primary ">Choose</button></form></li>'  ;
+  });
+  return selectHTML;
+}
 router.get('/UI/studentdashboard.html', (req, res) => {
   const cookieName = req.cookies.user;
   cookieObj = JSON.parse(cookieName);
@@ -35,17 +51,50 @@ router.get('/UI/studentdashboard.html', (req, res) => {
     let modifiedHTML = data
     const query = 'SELECT Hall_name FROM hall';
     con.query(query, (err, results) => {
-    if (err) {
-      throw err;
-    } else {
-      html = renderList(results)
-      modifiedHTML = modifiedHTML.replace('{{halls}}', html)
-      res.send(modifiedHTML);
+      if (err) {
+        throw err;
+      } else {
+        html = renderList(results)
+        modifiedHTML = modifiedHTML.replace('{{halls}}', html)
+      }
+      const q = 'SELECT Hall_name FROM hall WHERE Hall_id IN (SELECT Hall_id FROM hall_booking WHERE is_approved=0 AND User_id=?)';
+      con.query(q, [cookieObj[0].User_id], (e, r) => {
+        
+        if (e) {
+          throw e;
+        } else {
+          console.log(r)
+          html2 = renderPendingList(r)
+          
+          modifiedHTML = modifiedHTML.replace('{{pending}}', html2)
+        }
+      // const q3 = 'SELECT Hall_name FROM hall WHERE Hall_id IN (SELECT Hall_id FROM hall_booking WHERE is_approved=1 AND User_id=?)';
+      // con.query(q3,[cookieObj[0].User_id],(e, r) => {
+        
+      const q3 = 'SELECT hall.Hall_name, hall_booking.Date_, hall_booking.Start_time,hall_booking.End_time FROM hall INNER JOIN hall_booking ON hall.Hall_id = hall_booking.Hall_id WHERE hall_booking.is_approved =1 and User_id=?';
+      con.query(q3,[cookieObj[0].User_id],(e, r) => {
+        if (e) {
+          throw e;
+        } else {
+          html3 = renderApprovedList(r)
+          modifiedHTML = modifiedHTML.replace('{{app}}', html3)
+        }
+        const q4 = 'SELECT Building,Room_no,Room_id FROM classroom WHERE is_available=1';
+        con.query(q4, (e, r) => {
+          if (e) {
+            throw e;
+          } else {
+            html4 = renderClassroomList(r)
+            modifiedHTML = modifiedHTML.replace('{{availroom}}', html4)
+          }
+        res.send(modifiedHTML);
+      })
+    })
+      })  // <-- Closes con.query(q, (e, r) => {...})
+    })  // <-- Closes con.query(query, (err, results) => {...})
+  })  // <-- Closes fs.readFile(htmlFilePath, 'utf-8', (err,data)=>{...})
+})  // <-- Closes router.get('/UI/studentdashboard.html', (req, res) => {...})
 
-    }
-  } )
-  // res.sendFile(path.join(__dirname, 'UI', 'studentdashboard.html'));
-})})
 
 router.get('/UI/changePassword.html', (req, res) => {
   const u = req.cookies.user;
@@ -139,7 +188,9 @@ router.get("/UI/bookHall.html", (req, res)=>{
     }else{
       modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
     }
+    console.log(req.query.hallName);
     currentHallName = req.query.hallName;
+    
     modifiedHtml = modifiedHtml.replace('{{SELECTED_ROOM}}', '<p> Selected Room : ' + `${currentHallName}` + '</p>');
     res.send(modifiedHtml);
   });   
@@ -166,7 +217,7 @@ router.post("/book", (req, res) => {
       if(err) throw err;
       if(results.length == 0){
         sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
-        con.query(sqlQuery, [date, startTime,startTime,hall_id], function(err, results){
+        con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
           if(err) throw err;
           if(results.length == 0){
             const alert = `<script>alert('The hall is free.');window.history.back();</script>`
@@ -183,6 +234,51 @@ router.post("/book", (req, res) => {
       }
     })
   })
+});
+
+let currentClass="";
+router.get("/UI/takeKey.html", (req, res)=>{
+  const cookieName = req.cookies.user;
+  cookieObj = JSON.parse(cookieName);
+  let attributes = Object.keys(cookieObj[0]).length;
+  const htmlFilePath = path.join(__dirname, 'UI', 'takeKey.html');
+  fs.readFile(htmlFilePath, 'utf8', (err, data) => {
+    if (err) throw err
+    let modifiedHtml = data;
+    if(attributes===4){
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/adminDashboard.html");
+    }else{
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html");
+    }
+    
+    currentClass = req.query.ClassID;
+    console.log(currentClass)
+    modifiedHtml = modifiedHtml.replace('{{CLASSROOM}}', `${currentClass}`);
+    res.send(modifiedHtml);
+  });   
+})
+
+router.post("/takeKey", (req, res) => {
+  const boxkey = req.body.boxkey || 0;  // corrected the sequence of OR (||) operation
+  const date = req.body.date;
+  const takingTime = req.body.takingTime;
+  const returningTime = null; //fake
+  const room_id = currentClass;
+  console.log('taking ', currentClass);
+
+  const insertSqlQuery = "INSERT INTO key_assignment (Date_, Taking_time, Returning_time, User_id, Room_id, Box_key, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  con.query(insertSqlQuery, [date, takingTime, returningTime, cookieObj[0].User_id, room_id, boxkey, 0], function(err, insertResults) {
+      if (err) throw err;
+      else {
+        const updateSqlQuery = "UPDATE Classroom SET is_available = 0 WHERE Room_id = ?";
+        con.query(updateSqlQuery, [room_id], function(err, updateResults) {
+            if (err) throw err;
+            const alert = `<script>alert('You can take this key');window.location.href="/UI/studentdashboard.html";</script>`;
+            res.send(alert);
+        });
+      }
+  });
+
 });
 
 router.post("/change", (req, res) => {

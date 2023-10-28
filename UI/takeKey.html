@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Sidebar Template</title>
+    <!-- Include Bootstrap CSS link here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS for the sidebar */
+        .sidebar {
+            background-color: #000 !important; /* Add !important to override Bootstrap styles */
+            color: #fff; /* Text color */
+            height: 100vh; /* Set sidebar height to fill the viewport */
+        }
+        .sidebar .nav-item {
+            text-align: center; /* Center-align the nav items */
+            margin: 1rem 0; /* Add margin for spacing */
+        }
+        .sidebar .nav-link {
+            color: #fff; /* Text color for links */
+        }
+        .main{
+            margin-left: 300px;
+            margin-top: 25px;
+        }
+        label + span{
+     color: #ff0000;
+ }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-light" style="background-color: #a3e5fb; ">
+        <a class="navbar-brand" href="#">
+            <div style="display: flex; align-items: flex-end;">
+                <img src="nitc logo.svg" width="90" height="90" class="d-inline-block align-top" alt="">
+                 <!-- <span style="font-size: 36px;">NITCeys</span> -->
+            </div>
+        </a>
+        <span class="text-center" style="font-size: 36px;margin-right: 690px;">NITCeys</span>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="profileDetails.html">Profile Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="changePassword.html">Change Password</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href={{LINK}}>Dashboard</a>
+                        </li>
+                        <!-- Add other sidebar options here -->
+                    </ul>
+                </div>
+            </nav>
+
+    
+            <!-- Main content area -->
+            <main class="col-md-5 ms-sm-auto col-lg-4 justify-content-center main">
+                <!-- Change Password Form Inside Card -->
+                <div class="card mt-4 justify-content-center">
+                    <div class="card-body text-center">
+                        
+                        <!-- Add a form here for changing the password -->
+                        <form action="/takeKey" method="post">
+                            <h2 class="card-title">{{CLASSROOM}}</h2>
+                            
+                            <div class="form-group text-left">
+                                <label for="date">Date</label><span>*</span>
+                                <input type="Date" class="form-control" id="date" name ="date" required>
+                            </div>
+                            <div class="form-group text-left">
+                                <label for="takingTime">Time</label><span>*</span>
+                                <input type="time" class="form-control" id="takingTime" name="takingTime" required>
+                            </div>
+                            <div class="form-group text-left">
+                                <!-- <label for="boxkey">Box Key</label><span>*</span> -->
+                                <label for="boxkey">Box Key</label>
+                                <!-- <select name="boxkey" id="boxkey">
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select> -->
+                                <input type="checkbox" id="boxkey" name="boxkey" value="1">
+                                
+                            </div>
+                            <button type="submit" class="btn btn-primary">Take Key</button>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- Include Bootstrap and other necessary scripts and styles -->
+</body>
+</html>

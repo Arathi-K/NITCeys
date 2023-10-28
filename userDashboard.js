@@ -29,8 +29,17 @@ function renderList(data) {
 function renderPendingList(data){//add cancel request option
   let selectHTML = '';
    data.forEach(item => {
-     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `Hall Name: ${item.Hall_name} <br>Date: ${item.Date_} <br>Time: ${item.Start_time} - ${item.End_time}` + '</li>'  ;
-   });
+    // console.log("debug1.",item.Start_time,item.Hall_id);
+    const inputDate = new Date(item.Date_)
+    const year = inputDate.getFullYear();
+    const month = String(inputDate.getMonth()+1).padStart(2, "0")
+    const day = String(inputDate.getDate()).padStart(2, "0")
+    const formattedDate = `${year}-${month}-${day}`
+     selectHTML +=
+     '<li class="list-group-item d-flex justify-content-between align-items-center">'+ 
+     `Hall Name: ${item.Hall_name}<br> Date: ${formattedDate}<br>Time: ${item.Start_time} - ${item.End_time}` +
+      '<form action="/cancelRequest" method="post"><div class="form-group"><input type="text" hidden name="date" value="' + `${formattedDate}`+ '"><input type="text"  hidden name="Start_time" value="' + `${item.Start_time}` + '"><input type="text" hidden name="hallID" value="'+ `${item.Hall_id}` + '"><input type="text"  hidden name="HallName" value="'+`${item.Hall_name}`+'"></div><button class="btn btn-primary">Cancel</button></form></li>';
+ });
    return selectHTML;
 }
 
@@ -63,11 +72,9 @@ function renderClassroomList(data) {
   });
   return selectHTML;
 }
-
 router.get('/UI/studentdashboard.html', (req, res) => {
   const cookieName = req.cookies.user;
   cookieObj = JSON.parse(cookieName);
-  console.log(cookieObj[0].User_id);  //this accesses the roll number alone.
   const htmlFilePath = path.join(__dirname, 'UI', 'studentdashboard.html')
   fs.readFile(htmlFilePath, 'utf-8', (err,data)=>{
     if(err) throw err;
@@ -84,17 +91,14 @@ router.get('/UI/studentdashboard.html', (req, res) => {
     con.query(keyQuery, [cookieObj[0].User_id], (err, results)=>{
       if(err) throw err;
       html = renderKeyList(results);
-      console.log(html)
       modifiedHTML = modifiedHTML.replace('{{KEYS}}', html);
-      const q = 'SELECT hall.Hall_name, hall_booking.Date_, hall_booking.Start_time,hall_booking.End_time FROM hall INNER JOIN hall_booking ON hall.Hall_id = hall_booking.Hall_id WHERE hall_booking.is_approved =0 and User_id=?';
+      const q ='SELECT hall.Hall_name, hall_booking.Hall_id, hall_booking.Date_, hall_booking.Start_time, hall_booking.End_time FROM hall INNER JOIN hall_booking ON hall.Hall_id = hall_booking.Hall_id WHERE hall_booking.is_approved = 0 AND hall_booking.User_id =?';
       con.query(q, [cookieObj[0].User_id], (e, r) => {
-        
         if (e) {
           throw e;
         } else {
-          console.log(r)
+          console.log("debug 3",r)
           html2 = renderPendingList(r)
-          
           modifiedHTML = modifiedHTML.replace('{{pending}}', html2)
         }
         
@@ -366,13 +370,26 @@ router.get("/UI/takeKey.html", (req, res)=>{
   });   
 })
 
+router.post("/cancelRequest", (req, res) => {
+  const User_id=cookieObj[0].User_id;
+  const hall_id=req.body.hallID;
+  const date=req.body.date;
+  const Start_time=req.body.Start_time;
+  const deleteSqlQuery = "DELETE FROM hall_booking WHERE User_id = ?   AND Hall_id = ?   AND Date_ = ?  AND Start_time = ?  ";
+  con.query(deleteSqlQuery, [User_id,hall_id,date,Start_time], function(err, delResults) {
+      if (err) throw err;
+      else{
+            const alert = `<script>alert('Booking Request Cancelled');window.location.href="/UI/studentdashboard.html";</script>`;
+            res.send(alert);
+          }
+        });
+});
 router.post("/takeKey", (req, res) => {
   const boxkey = req.body.boxkey || 0;  // corrected the sequence of OR (||) operation
   const date = req.body.date;
   const takingTime = req.body.takingTime;
   const returningTime = null; //fake
   const room_id = currentClass;
-  console.log('taking ', currentClass);
 
   const insertSqlQuery = "INSERT INTO key_assignment (Date_, Taking_time, Returning_time, User_id, Room_id, Box_key, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?)";
   con.query(insertSqlQuery, [date, takingTime, returningTime, cookieObj[0].User_id, room_id, boxkey, 0], function(err, insertResults) {

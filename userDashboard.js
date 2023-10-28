@@ -30,10 +30,15 @@ function renderPendingList(data){//add cancel request option
   let selectHTML = '';
    data.forEach(item => {
     // console.log("debug1.",item.Start_time,item.Hall_id);
+    const inputDate = new Date(item.Date_)
+    const year = inputDate.getFullYear();
+    const month = String(inputDate.getMonth()+1).padStart(2, "0")
+    const day = String(inputDate.getDate()).padStart(2, "0")
+    const formattedDate = `${year}-${month}-${day}`
      selectHTML +=
      '<li class="list-group-item d-flex justify-content-between align-items-center">'+ 
-     `Hall Name: ${item.Hall_name}<br> Date: ${item.Date_}<br>Time: ${item.Start_time} - ${item.End_time}` +
-      '<form action="/cancelRequest" method="post"><div class="form-group"><input type="text" hidden name="date" value="' + `${item.Date_ }`+ '"><input type="text"  hidden name="Start_time" value="' + `${item.Start_time}` + '"><input type="text" hidden name="hallID" value="'+ `${item.Hall_id}` + '"><input type="text"  hidden name="HallName" value="'+`${item.Hall_name}`+'"></div><button class="btn btn-primary">Cancel</button></form></li>';
+     `Hall Name: ${item.Hall_name}<br> Date: ${formattedDate}<br>Time: ${item.Start_time} - ${item.End_time}` +
+      '<form action="/cancelRequest" method="post"><div class="form-group"><input type="text" hidden name="date" value="' + `${formattedDate}`+ '"><input type="text"  hidden name="Start_time" value="' + `${item.Start_time}` + '"><input type="text" hidden name="hallID" value="'+ `${item.Hall_id}` + '"><input type="text"  hidden name="HallName" value="'+`${item.Hall_name}`+'"></div><button class="btn btn-primary">Cancel</button></form></li>';
  });
    return selectHTML;
 }
@@ -369,22 +374,16 @@ router.post("/cancelRequest", (req, res) => {
   const User_id=cookieObj[0].User_id;
   const hall_id=req.body.hallID;
   const date=req.body.date;
-  const inputDate = new Date(date)
-  const year = inputDate.getFullYear();
-  const month = String(inputDate.getMonth()+1).padStart(2, "0")
-  const day = String(inputDate.getDate()).padStart(2, "0")
-  const formattedDate = `${year}-${month}-${day}`
-
   const Start_time=req.body.Start_time;
   const deleteSqlQuery = "DELETE FROM hall_booking WHERE User_id = ?   AND Hall_id = ?   AND Date_ = ?  AND Start_time = ?  ";
-  con.query(deleteSqlQuery, [User_id,hall_id,formattedDate,Start_time], function(err, delResults) {
+  con.query(deleteSqlQuery, [User_id,hall_id,date,Start_time], function(err, delResults) {
       if (err) throw err;
       else{
             const alert = `<script>alert('Booking Request Cancelled');window.location.href="/UI/studentdashboard.html";</script>`;
             res.send(alert);
           }
         });
-      });
+});
 router.post("/takeKey", (req, res) => {
   const boxkey = req.body.boxkey || 0;  // corrected the sequence of OR (||) operation
   const date = req.body.date;

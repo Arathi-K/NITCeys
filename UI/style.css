@@ -17,7 +17,7 @@ body {
 
 .h-100 {
     height: 100%!important;
-    background-color: skyblue;
+    background-color: rgb(0, 0, 0);
 }
 
 h3 {
@@ -46,6 +46,7 @@ li {
 #sidebar {
     max-width: 264px;
     min-width: 264px;
+    
     transition: all 0.35s ease-in-out;
     box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5);
     z-index: 1111;
@@ -60,7 +61,7 @@ li {
 .main {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 80vh;
     width: 100%;
     overflow: hidden;
     transition: all 0.35s ease-in-out;
@@ -71,7 +72,7 @@ li {
 }
 
 .sidebar-logo a {
-    color: #4a00ba;
+    color: #ffffff;
     font-size: 1.25rem;
     font-weight: 600;
 }
@@ -81,14 +82,14 @@ li {
 }
 
 .sidebar-header {
-    color: #4a00ba;
+    color: #ffffff;
     font-size: .75rem;
     padding: 1.5rem 1.5rem .375rem;
 }
 
 a.sidebar-link {
     padding: .625rem 1.625rem;
-    color: #4a00ba;
+    color: #ffffff;
     position: relative;
     display: block;
     font-size: 1rem;

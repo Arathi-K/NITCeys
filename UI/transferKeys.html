@@ -24,6 +24,9 @@
             margin-left: 300px;
             margin-top: 25px;
         }
+        label + span{
+     color: #ff0000;
+ }
     </style>
 </head>
 <body>
@@ -46,8 +49,12 @@
                             <a class="nav-link" href="{{LINK}}">Dashboard</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="profileDetails.html">Profile Details</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="changePassword.html">Change Password</a>
                         </li>
+                        
                         <!-- Add other sidebar options here -->
                     </ul>
                 </div>
@@ -57,41 +64,33 @@
             <!-- Main content area -->
             <main class="col-md-5 ms-sm-auto col-lg-4 justify-content-center main">
                 <!-- Change Password Form Inside Card -->
-                <h2 class="text-center">User Information</h2>
                 <div class="card mt-4 justify-content-center">
                     <div class="card-body text-center">
-                        
+                        <h2 class="card-title">Key transfer</h2>
                         <!-- Add a form here for changing the password -->
-                        <form action="/UI/editPhoneNumber.html" method="get">
-                            <div class="form-group">
-                                <h4>Name : {{NAME}}</h4>
+                        <form action="/transfer" method="post">
+                            {{CLASSROOM}}
+                            <div class="form-group text-left">
+                                <label for="new-password">Date</label><span>*</span>
+                                <input type="Date" name="theDate" class="form-control" id="new-password" name ="date" required="required">
                             </div>
-                            <br>
-                            <div class="form-group">
-                                <h4>{{TYPE_OF_ID}} : {{USER_ID}}</h4>
+                            <div class="form-group text-left">
+                                <label for="confirm-new-password">Time</label><span>*</span>
+                                <input type="time" class="form-control" id="confirm-new-password" name="Time" required="required">
                             </div>
-                            <br>
-                            <div class="form-group">
-                                <h4>Phone No : {{PHONE}}</h4>
+                            <div class="form-group text-left">
+                                <label for="confirm-new-password">Phone No</label><span>*</span>
+                                <input type="text" class="form-control" name="phone" id="confirm-new-password" required="required">
+                                <span id="errorText" style="color: red;"></span>
                             </div>
-                            <br>
-                            <div class="form-group">
-                                <h4>Role : {{ROLE}}</h4>
-                            </div>
-                            <br>
-                            <!-- <form action="/UI/editPhoneNumber.html" method="get"> -->
-                                <button  type="submit" class="btn btn-primary">Edit</button>
-                            <!-- </form> -->
-                            <!-- <a href="/UI/editPhoneNumber.html">
-                                <button type="submit" class="btn btn-primary">Edit</button>
-                            </a>                             -->
-                            <!-- <button type="submit" class="btn btn-primary">Edit</button> -->
+                            <button type="submit" class="btn btn-primary">Transfer</button>
                         </form>
                     </div>
                 </div>
             </main>
         </div>
     </div>
-    <!-- Include Bootstrap and other necessary scripts and styles -->
+   
 </body>
 </html>
+   

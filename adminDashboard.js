@@ -29,7 +29,7 @@ router.get('/UI/adminDashboard.html', (req, res) => {
         // console.log(results);
         let listItems = "";
             results.forEach(row => {
-                listItems += `<li> <strong> Location: </strong>${row.Building} ${row.Room_no} <br> <strong>Key Holder:</strong> ${row.Name}<br> <strong>Phone Number:</strong> ${row.Phone_number}  </li> <br>`;
+                listItems += `<li> <strong> Location: </strong>${row.Building} ${row.Room_no} <br> <strong>Key Holder:</strong> ${row.Name}<br> <strong>Phone Number:</strong> ${row.Phone_number}  </li><hr> <br>`;
             });
         modified=modified.replace('{{listItems}}', `${listItems}`);
     })
@@ -76,6 +76,7 @@ router.get('/UI/adminDashboard.html', (req, res) => {
                       </button>
                   </div>
               </div>
+              <hr>
               <br>`;
           });
       modified=modified.replace('{{ReturnedKeys}}', `${ReturnedKeys}`);
@@ -137,6 +138,7 @@ router.get('/UI/adminDashboard.html', (req, res) => {
                     </button>
                 </div>
                 </div>
+                <hr>
                 <br>`;
             });
         modified=modified.replace('{{RequestItems}}', `${RequestItems}`);

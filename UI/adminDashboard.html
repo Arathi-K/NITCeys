@@ -22,11 +22,12 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-light" style="background-color: #a3e5fb; ">
         <a class="navbar-brand" href="#">
             <div style="display: flex; align-items: flex-end;">
-                <img src="Assets/nitc_logo.png" width="90" height="90" class="d-inline-block align-top" alt="">
+                <img src="nitc logo.svg" width="90" height="90" class="d-inline-block align-top" alt="">
                  <!-- <span style="font-size: 36px;">NITCeys</span> -->
             </div>
         </a>
@@ -49,11 +50,6 @@
                                 Change Password
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">
-                                Logout
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </nav>
@@ -74,109 +70,34 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="#view-keyholders" data-toggle="tab">View Keyholders</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#verify-keys" data-toggle="tab">Verify Keys</a>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="view-halls">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            CSED Seminar Hall
-                                            <button class="btn btn-primary">Book Hall</button>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Mechanical Seminar Hall
-                                            <button class="btn btn-primary">Book Hall</button>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Aryabhatta Hall
-                                            <button class="btn btn-primary">Book Hall</button>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Bhaskara Hall
-                                            <button class="btn btn-primary">Book Hall</button>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Chanakya Hall
-                                            <button class="btn btn-primary">Book Hall</button>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Auditorium
-                                            <button class="btn btn-primary">Book Hall</button>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            MBA Auditorium
-                                            <button class="btn btn-primary">Book Hall</button>
-                                        </li>
-                                    </ul>
+                                        <ul class="list-group">
+                                            {{TotalHalls}}
+                                        </ul>
                                     </div>
                                     <div class="tab-pane fade" id="pending-requests">
                                         <ul class="list-group">
-                                            <li class="list-group-item">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <strong>Location Hall:</strong> Mechanical Seminar Hall
-                                                        <br>
-                                                        <strong>Request Date:</strong> October 17, 2023
-                                                        <br>
-                                                        <strong>Requested Time:</strong> 11:30 AM - 12:00 PM
-                                                        <br>
-                                                        <strong>Reason:</strong> Course Workshop
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button class="btn btn-primary">Approve</button>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <strong>Location Hall:</strong> Aryabhatta Hall
-                                                        <br>
-                                                        <strong>Request Date:</strong> October 12, 2023
-                                                        <br>
-                                                        <strong>Requested Time:</strong> 11:00 AM - 1:00 PM
-                                                        <br>
-                                                        <strong>Reason:</strong> Webinar
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button class="btn btn-primary">Approve</button>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <!-- Add more list items for other pending requests -->
+                                            {{RequestItems}}
                                         </ul>
                                     </div>
                                     <div class="tab-pane fade" id="view-keyholders">
-                                        <!-- Admin login form similar to student form -->
-                                        <li class="list-group-item">
-                                            <strong>Location Hall: </strong> Mechanical Seminar Hall
-                                            <br>
-                                            <strong>Key Holder:</strong> Vaisakh Ramachandran
-                                            <br>
-                                            <strong>Key Holder Contact:</strong> 9895280743
-                                            <br>
-                                            <strong>Reason:</strong> Course Workshop
-                                        </li>
-                                        <li class="list-group-item">
-                                            <strong>Location Hall: </strong> Aryabhatta Hall
-                                            <br>
-                                            <strong>Key Holder:</strong> Amritha H Prabhu
-                                            <br>
-                                            <strong>Key Holder:</strong> 9207874792
-                                            <br>
-                                            <strong>Reason:</strong> Webinar
-                                        </li>
-                                        <li class="list-group-item">
-                                            <strong>Location Hall: </strong> ELHC 401
-                                            <br>
-                                            <strong>Key Holder:</strong> Tejaswini R
-                                            <br>
-                                            <strong>Key Holder:</strong> 8606357263
-                                            <br>
-                                            <strong>Reason:</strong> Class
-                                        </li>
+                                        <ul style="list-style-type: none; padding: 0;">
+                                            {{listItems}}
+                                        </ul>
                                     </div>
-                                </div>
+                                    <div class="tab-pane fade" id="verify-keys">
+                                        <ul style="list-style-type: none; padding: 0;">
+                                            {{ReturnedKeys}}
+                                        </ul>
+                                    </div>
+                                </div> 
                             </div>
                         </div>
                     </div>
@@ -187,5 +108,125 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        const buttons = document.querySelectorAll('.btn.btn-primary.approve-button');
+        buttons.forEach(buttonContainer => {
+            buttonContainer.addEventListener('click', function(event) {
+                const hallid = event.target.getAttribute('data-hallid');
+                const date = event.target.getAttribute('data-date');
+                const start = event.target.getAttribute('data-start');
+                const end = event.target.getAttribute('data-end');
+                const buttonId = event.target.getAttribute('id');
+                const idNum = buttonId.substring(17);
+                const userId = event.target.getAttribute('data-user');
+                console.log(hallid,date,start,end,idNum,userId);
+                fetch('/updateDatabase', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    hallid: hallid,
+                    date: date,
+                    start: start,
+                    end:end,
+                    userId:userId
+                }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('came back:', data);
+                    alert(data.message);
+                    const id = 'box'+idNum;
+                    const box = document.getElementById(id);
+                    box.innerHTML=""
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+                    });
+                });
+
+
+        const buttonsRejected = document.querySelectorAll('.btn.btn-primary.reject-button');
+        buttonsRejected.forEach(buttonContainer => {
+        buttonContainer.addEventListener('click', function(event) {
+            const hallid = event.target.getAttribute('data-hallid');
+            const date = event.target.getAttribute('data-date');
+            const start = event.target.getAttribute('data-start');
+            const end = event.target.getAttribute('data-end');
+            const buttonId = event.target.getAttribute('id');
+            const idNum = buttonId.substring(14);
+            const userId = event.target.getAttribute('data-user');
+            console.log(hallid,date,start,end,idNum,userId);
+            fetch('/deleteDatabase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                hallid: hallid,
+                date: date,
+                start: start,
+                end: end,
+                userId: userId
+            }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Database Delete:', data);
+                alert(data.message);
+                const id = 'box'+idNum;
+                const box = document.getElementById(id);
+                box.innerHTML=""
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+                });
+            });
+
+        const buttonsVerify = document.querySelectorAll('.btn.btn-primary.key-button');
+        buttonsVerify.forEach(buttonContainer => {
+            buttonContainer.addEventListener('click', function(event) {
+                const userId = event.target.getAttribute('data-user');
+                const start = event.target.getAttribute('data-start');
+                const date = event.target.getAttribute('data-date');
+                const roomId = event.target.getAttribute('data-roomid')
+
+                const buttonId = event.target.getAttribute('id');
+                const idNum = buttonId.substring(11);
+                
+                console.log(roomId,date,start,idNum,userId);
+
+                fetch('/deleteKeyholder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    roomId: roomId,
+                    date: date,
+                    start: start,
+                    userId:userId
+                }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Database updated:', data);
+                    const id = 'keyapprove'+idNum;
+                    const box = document.getElementById(id);
+                    box.innerHTML=""
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+                    });
+                });
+
+    </script>
+
+
 </body>
 </html>

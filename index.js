@@ -7,6 +7,9 @@ const app = express();
 const port = 8080;
 const http = require('http');
 
+const adminDashboardRoutes = require('./adminDashboard');
+app.use('',adminDashboardRoutes);
+
 const userdashboardRoutes = require('./userDashboard'); 
 const { log } = require('console');
 

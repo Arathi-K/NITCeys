@@ -270,79 +270,79 @@ router.get("/UI/editPhoneNumber.html", (req, res)=>{
 });   
 })
 
-router.post("/book", (req, res) => {
-  const date = req.body.date;
-  const startTime = req.body.startTime;
-  const endTime = req.body.endTime;
-  const reason = req.body.reason;
-  console.log('booking',currentHallName)
-  var loggedInUser = "";
-  if(cookieObj[0].Privilege == 'admin'){
-    loggedInUser = cookieObj[0].Admin_id;
-  } else {
-    loggedInUser = cookieObj[0].User_id;
-  }
-  console.log('logged in as', loggedInUser);
-  if(endTime <= startTime){
-    const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
-    return res.send(alert);
-  }
-  var sqlQuery = "select hall_id from hall where hall_name = '" + currentHallName + "';";
-  var hall_id = "";
-  con.query(sqlQuery, function(err, results){
-    if(err) throw err;
-    console.log(results[0].hall_id);
-    hall_id = results[0].hall_id;
-    sqlQuery = "select * from hall_booking where date_ = ? and start_time = ? and end_time = ? and hall_id = ? and is_approved = 1";
-    con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
-      if(err) throw err;
-      if(results.length == 0){
-        sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
-        con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
-          if(err) throw err;
-          if(results.length == 0){
-            sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
-            con.query(sqlQuery, [date, endTime,endTime,hall_id], function(err, results){
-              if(err) throw err;
-              if(results.length == 0){
-                sqlQuery = "select * from hall_booking where date_ = ? and start_time > ? and end_time < ? and hall_id = ? and is_approved = 1";
-                con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
-                  if(err) throw err;
-                  if(results.length == 0){
-                    sqlQuery = "insert into hall_booking values (?,?,?,?,?,0);";
-                    con.query(sqlQuery, [date,startTime,endTime,hall_id,loggedInUser], function(err, results){
-                    if(err) throw err;
-                    if(cookieObj[0].Privilege == 'admin'){
-                      const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/adminDashboard.html';</script>`;
-                      res.send(alert);
-                    } else {
-                      const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/studentdashboard.html';</script>`;
-                      res.send(alert);
-                    }  
-                  })
-                  } else {
-                    const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
-                    res.send(alert);
-                  }
-                })
-              } else {
-                const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
-                res.send(alert);
-              }
-            })
-          } else {
-            const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
-            res.send(alert);
-          }
-        })
-      } else {
-        console.log(results);
-        const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
-        res.send(alert);
-      }
-    })
-  })
-});
+// router.post("/book", (req, res) => {
+//   const date = req.body.date;
+//   const startTime = req.body.startTime;
+//   const endTime = req.body.endTime;
+//   const reason = req.body.reason;
+//   console.log('booking',currentHallName)
+//   var loggedInUser = "";
+//   if(cookieObj[0].Privilege == 'admin'){
+//     loggedInUser = cookieObj[0].Admin_id;
+//   } else {
+//     loggedInUser = cookieObj[0].User_id;
+//   }
+//   console.log('logged in as', loggedInUser);
+//   if(endTime <= startTime){
+//     const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
+//     return res.send(alert);
+//   }
+//   var sqlQuery = "select hall_id from hall where hall_name = '" + currentHallName + "';";
+//   var hall_id = "";
+//   con.query(sqlQuery, function(err, results){
+//     if(err) throw err;
+//     console.log(results[0].hall_id);
+//     hall_id = results[0].hall_id;
+//     sqlQuery = "select * from hall_booking where date_ = ? and start_time = ? and end_time = ? and hall_id = ? and is_approved = 1";
+//     con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
+//       if(err) throw err;
+//       if(results.length == 0){
+//         sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
+//         con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
+//           if(err) throw err;
+//           if(results.length == 0){
+//             sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
+//             con.query(sqlQuery, [date, endTime,endTime,hall_id], function(err, results){
+//               if(err) throw err;
+//               if(results.length == 0){
+//                 sqlQuery = "select * from hall_booking where date_ = ? and start_time > ? and end_time < ? and hall_id = ? and is_approved = 1";
+//                 con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
+//                   if(err) throw err;
+//                   if(results.length == 0){
+//                     sqlQuery = "insert into hall_booking values (?,?,?,?,?,0);";
+//                     con.query(sqlQuery, [date,startTime,endTime,hall_id,loggedInUser], function(err, results){
+//                     if(err) throw err;
+//                     if(cookieObj[0].Privilege == 'admin'){
+//                       const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/adminDashboard.html';</script>`;
+//                       res.send(alert);
+//                     } else {
+//                       const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/studentdashboard.html';</script>`;
+//                       res.send(alert);
+//                     }  
+//                   })
+//                   } else {
+//                     const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+//                     res.send(alert);
+//                   }
+//                 })
+//               } else {
+//                 const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+//                 res.send(alert);
+//               }
+//             })
+//           } else {
+//             const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+//             res.send(alert);
+//           }
+//         })
+//       } else {
+//         console.log(results);
+//         const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+//         res.send(alert);
+//       }
+//     })
+//   })
+// });
 
 let currentClass="";
 router.get("/UI/takeKey.html", (req, res)=>{

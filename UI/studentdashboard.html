@@ -102,20 +102,7 @@
                                     <div class="tab-pane fade" id="approved-requests">
                                         <ul class="list-group">
                                            {{app}}
-                                            <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <strong>Location Hall: </strong> Mechanical Seminar Hall
-                                                <br>
-                                                <strong>Request Date:</strong> October 12, 2023
-                                                <br>
-                                                <strong>Requested Time:</strong> 11:00 AM - 1:00 PM
-                                                <br>
-                                                <span class="text-success">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="green">
-                                                        <path d="M9.293 16.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-1.5 1.5a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l1.5-1.5a1 1 0 011.414 0z"/>
-                                                    </svg>
-                                                </span>
-                                            </li> -->
-                                            <!-- Add more list items for other pending requests -->
+                                            
                                         </ul>
                                     </div>
                                     <div class="tab-pane fade" id="view-classrooms">
@@ -126,29 +113,14 @@
                                     </div>
                                     <div class="tab-pane fade" id="active-keys">
                                         <ul class="list-group">
-                                            <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                Mechanical Seminar Hall
-                                                <div class="btn-group">
-                                                    <button class="btn btn-primary">Transfer Key</button>
-                                                    <button class="btn btn-primary ml-1">Return Key</button>
-                                                </div>
-                                            </li> -->
-                                            <!-- select Building, Room_no from classroom where Room_id in 
-(select distinct Room_id from key_assignment where User_id="B20123CS"
-); -->
-                                            <!-- Add more list items for other pending requests -->
+                                            
                                             {{KEYS}}
                                         </ul>
                                     </div>
                                     <div class="tab-pane fade" id="request-return">
                                         <!-- Admin login form similar to student form -->
                                         <ul class="list-group">
-                                            <li class="list-group-item">
-                                                MBA Auditorium
-                                            </li>
-                                            <li class="list-group-item">
-                                                Bhaskara Hall
-                                            </li>
+                                            {{keyPending}}
                                             <!-- Add more list items for other pending requests -->
                                         </ul>
                                     </div>

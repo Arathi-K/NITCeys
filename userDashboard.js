@@ -13,7 +13,13 @@ router.use(cookieParser());
 let cookieObj = "";
 router.use(bodyParser.urlencoded({ extended: true }));
 
-
+function renderPendingKey(data){
+  let html = '';
+  data.forEach(item => {
+    html += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `${item.Building}` +' '+ `${item.Room_no}`+'</li>'  ;
+  });
+  return html;
+}
 function renderList(data) {
   let selectHTML = '';
   data.forEach(item => {
@@ -37,8 +43,10 @@ function renderKeyList(data){
     if(item.is_verified===1){
       btns[0]="Returned"
       btns[1]="btn-secondary"
-    }
+      list += '<li class="list-group-item d-flex justify-content-between align-items-center">'+ `${item.Building}` + ' ' + `${item.Room_no}`+ '<form action="/returned" method="post"><div class="form-group"><input type="text" hidden name="class" value="' + `${item.Room_id}` + '"></div><div class="btn-group"><button class="btn '+ `${btns[1]}`+ ' ml-1">'+ `${btns[0]}`+'</button></div></form></li>'
+    }else{
     list += '<li class="list-group-item d-flex justify-content-between align-items-center">'+ `${item.Building}` + ' ' + `${item.Room_no}`+ '<form action="/UI/transferKeys.html" method="get"><div class="form-group"><input type="text" hidden name="room" value="' + `${item.Room_id}` + '"></div><div class="btn-group"><button class="btn btn-primary">Transfer Key</button></div></form><form action="/returned" method="post"><div class="form-group"><input type="text" hidden name="class" value="' + `${item.Room_id}` + '"></div><div class="btn-group"><button class="btn '+ `${btns[1]}`+ ' ml-1">'+ `${btns[0]}`+'</button></div></form></li>'
+    }
   });
   return list;
 }
@@ -109,14 +117,21 @@ router.get('/UI/studentdashboard.html', (req, res) => {
             html4 = renderClassroomList(r)
             modifiedHTML = modifiedHTML.replace('{{availroom}}', html4)
           }
-        res.send(modifiedHTML);
+        const pendingKeyRequests = "select Building, Room_no from classroom where Room_id in (select Room_id from key_assignment where User_id = ? and is_verified =1)"
+        con.query(pendingKeyRequests,[cookieObj[0].User_id],(err,results)=>{
+          if(err) throw err
+          html5 = renderPendingKey(results)
+          modifiedHTML = modifiedHTML.replace('{{keyPending}}', html5)
+          res.send(modifiedHTML);
+        })
+        
       })
     })
-      // res.send(modifiedHTML);
+     
     })
     
   } )
-  // res.sendFile(path.join(__dirname, 'UI', 'studentdashboard.html'));
+  
 })})})
 
 
@@ -496,4 +511,5 @@ router.post("/returned",(req,res)=>{
       res.send(alert)
     })
 })
+
 module.exports = router;

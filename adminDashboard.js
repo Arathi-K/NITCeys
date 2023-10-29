@@ -173,7 +173,7 @@ router.post('/updateDatabase', (req, res) => {
                     (row.Start_time>=start && row.End_time<=end) ||
                     (row.Start_time<=start && row.End_time>=end))
                 {
-                    console.log("Cant approve Auto Rejecting due to clash");
+                    console.log("Cannot approve, auto rejecting due to clash.");
                     error_flag=1;
                     console.log(error_flag);
                 }
@@ -273,86 +273,104 @@ router.get("/UI/bookHall.html", (req, res)=>{
   })
 
 
-  router.post("/book", (req, res) => {
-    const date = req.body.date;
-    const startTime = req.body.startTime;
-    const endTime = req.body.endTime;
-    const reason = req.body.reason;
-    console.log('booking',currentHallName)
-    var loggedInUser = "";
-    
-    if(Object.keys(cookieObj[0]).length==4){
-      loggedInUser = cookieObj[0].Admin_id;
-      console.log("admin")
-    }
-    else{
-      loggedInUser = cookieObj[0].User_id;
-      console.log("user")
-    }
-    console.log('logged in as', loggedInUser);
-
-    if(endTime <= startTime){
-      const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
-      return res.send(alert);
-    }
-    var sqlQuery = "select hall_id from hall where hall_name = '" + currentHallName + "';";
-    var hall_id = "";
-    con.query(sqlQuery, function(err, results){
+router.post("/book", (req, res) => {
+  const date = req.body.date;
+  const startTime = req.body.startTime;
+  const endTime = req.body.endTime;
+  const reason = req.body.reason;
+  console.log('booking',currentHallName)
+  var loggedInUser = "";
+  
+  if(Object.keys(cookieObj[0]).length==4){
+    loggedInUser = cookieObj[0].Admin_id;
+    console.log("admin")
+  }
+  else{
+    loggedInUser = cookieObj[0].User_id;
+    console.log("user")
+  }
+  console.log('from admin dashboard : logged in as', loggedInUser);
+  const today = new Date();
+  const todays_date = today.getDate();
+  const month = today.getMonth() + 1;
+  const year =  today.getFullYear();
+  const requiredDate = String(year) + '-' + String(month) + '-' + String(todays_date);
+  console.log('date',requiredDate, 'time: ', today.toTimeString());
+  const hrs = today.getHours();
+  const mins = today.getMinutes();
+  const secs = today.getSeconds();
+  const current_time = String(hrs) + ":" + String(mins);
+  console.log('current time: ', current_time);
+  if(date < requiredDate){
+    const alert = `<script>alert('Invalid date chosen.');window.history.back();</script>`
+    return res.send(alert);
+  }
+  if(startTime < current_time){
+    const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
+    return res.send(alert);
+  }
+  if(endTime <= startTime){
+    const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
+    return res.send(alert);
+  }
+  var sqlQuery = "select hall_id from hall where hall_name = '" + currentHallName + "';";
+  var hall_id = "";
+  con.query(sqlQuery, function(err, results){
+    if(err) throw err;
+    console.log(results[0].hall_id);
+    hall_id = results[0].hall_id;
+    sqlQuery = "select * from hall_booking where date_ = ? and start_time = ? and end_time = ? and hall_id = ? and is_approved = 1";
+    con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
       if(err) throw err;
-      console.log(results[0].hall_id);
-      hall_id = results[0].hall_id;
-      sqlQuery = "select * from hall_booking where date_ = ? and start_time = ? and end_time = ? and hall_id = ? and is_approved = 1";
-      con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
-        if(err) throw err;
-        if(results.length == 0){
-          sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
-          con.query(sqlQuery, [date, startTime,startTime,hall_id], function(err, results){
-            if(err) throw err;
-            if(results.length == 0){
-              sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
-              con.query(sqlQuery, [date, endTime,endTime,hall_id], function(err, results){
-                if(err) throw err;
-                if(results.length == 0){
-                  sqlQuery = "select * from hall_booking where date_ = ? and start_time > ? and end_time < ? and hall_id = ? and is_approved = 1";
-                  con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
+      if(results.length == 0){
+        sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
+        con.query(sqlQuery, [date, startTime,startTime,hall_id], function(err, results){
+          if(err) throw err;
+          if(results.length == 0){
+            sqlQuery = "select * from hall_booking where date_ = ? and start_time < ? and end_time > ? and hall_id = ? and is_approved = 1";
+            con.query(sqlQuery, [date, endTime,endTime,hall_id], function(err, results){
+              if(err) throw err;
+              if(results.length == 0){
+                sqlQuery = "select * from hall_booking where date_ = ? and start_time > ? and end_time < ? and hall_id = ? and is_approved = 1";
+                con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
+                  if(err) throw err;
+                  if(results.length == 0){
+                    sqlQuery = "insert into hall_booking values (?,?,?,?,?,0);";
+                    con.query(sqlQuery, [date,startTime,endTime,hall_id,loggedInUser], function(err, results){
                     if(err) throw err;
-                    if(results.length == 0){
-                      sqlQuery = "insert into hall_booking values (?,?,?,?,?,0);";
-                      con.query(sqlQuery, [date,startTime,endTime,hall_id,loggedInUser], function(err, results){
-                      if(err) throw err;
-                      
-                      if(Object.keys(cookieObj[0]).length==4){
-                        const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/adminDashboard.html';</script>`;
-                        res.send(alert);
-                      }
-                      else{
-                        const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/studentdashboard.html';</script>`;
-                        res.send(alert);
-                      }
-
-                    })
-                    } else {
-                      const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+                    
+                    if(Object.keys(cookieObj[0]).length==4){
+                      const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/adminDashboard.html';</script>`;
                       res.send(alert);
                     }
+                    else{
+                      const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/studentdashboard.html';</script>`;
+                      res.send(alert);
+                    }
+
                   })
-                } else {
-                  const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
-                  res.send(alert);
-                }
-              })
-            } else {
-              const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
-              res.send(alert);
-            }
-          })
-        } else {
-          console.log(results);
-          const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
-          res.send(alert);
-        }
-      })
+                  } else {
+                    const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+                    res.send(alert);
+                  }
+                })
+              } else {
+                const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+                res.send(alert);
+              }
+            })
+          } else {
+            const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+            res.send(alert);
+          }
+        })
+      } else {
+        console.log(results);
+        const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
+        res.send(alert);
+      }
     })
-  });
+  })
+});
 
 module.exports = router;

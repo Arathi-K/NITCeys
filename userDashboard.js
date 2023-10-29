@@ -72,19 +72,20 @@ function renderClassroomList(data) {
   });
   return selectHTML;
 }
+
 router.get('/UI/studentdashboard.html', (req, res) => {
   const today = new Date();
   const todays_date = today.getDate();
   const month = today.getMonth() + 1;
   const year =  today.getFullYear();
   const requiredDate = String(year) + '-' + String(month) + '-' + String(todays_date);
-  console.log('date',requiredDate);
+  console.log('date from dashboard',requiredDate);
   const cookieName = req.cookies.user;
   cookieObj = JSON.parse(cookieName);
   const htmlFilePath = path.join(__dirname, 'UI', 'studentdashboard.html')
   fs.readFile(htmlFilePath, 'utf-8', (err,data)=>{
     if(err) throw err;
-    let modifiedHTML = data
+    let modifiedHTML = data;
     const query = 'SELECT Hall_name FROM hall';
     con.query(query, (err, results) => {
     if (err) {
@@ -103,7 +104,7 @@ router.get('/UI/studentdashboard.html', (req, res) => {
         if (e) {
           throw e;
         } else {
-          console.log("debug 3",r)
+          // console.log("debug 3",r)
           html2 = renderPendingList(r)
           modifiedHTML = modifiedHTML.replace('{{pending}}', html2)
         }
@@ -165,7 +166,7 @@ router.get('/UI/profileDetails.html', (req, res) => {
     }else{
       modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
     }
-    if (cookieObj[0].role == 'student'){
+    if (cookieObj[0].role == 'student' || cookieObj[0].role == 'Student'){
       modifiedHtml = modifiedHtml.replace('{{TYPE_OF_ID}}', 'Roll No');
       const placeholders = {
         USER_ID: cookieObj[0].User_id,
@@ -177,7 +178,7 @@ router.get('/UI/profileDetails.html', (req, res) => {
         modifiedHtml = modifiedHtml.replace(`{{${placeholder}}}`, placeholders[placeholder]);
       }
       res.send(modifiedHtml);
-    } else if (cookieObj[0].role == 'teacher'){
+    } else if (cookieObj[0].role == 'teacher' || cookieObj[0].role == 'Teacher' || cookieObj[0].role == 'Faculty' || cookieObj[0].role == 'faculty'){
       modifiedHtml = modifiedHtml.replace('{{TYPE_OF_ID}}', 'Teacher ID');
       const placeholders = {
         USER_ID: cookieObj[0].User_id,
@@ -286,12 +287,17 @@ router.post("/book", (req, res) => {
   const reason = req.body.reason;
   console.log('booking',currentHallName)
   var loggedInUser = "";
-  if(cookieObj[0].Privilege == 'admin'){
+  if(cookieObj[0].Privilege == 'admin' || cookieObj[0].Privilege == 'Admin'){
     loggedInUser = cookieObj[0].Admin_id;
   } else {
     loggedInUser = cookieObj[0].User_id;
   }
-  console.log('logged in as', loggedInUser);
+  // console.log('from booking alert : logged in as', loggedInUser);
+  const todays_date = today.getDate();
+  const month = today.getMonth() + 1;
+  const year =  today.getFullYear();
+  const requiredDate = String(year) + '-' + String(month) + '-' + String(todays_date);
+  console.log('date',requiredDate), 'time: ', today.toTimeString();
   if(endTime <= startTime){
     const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
     return res.send(alert);
@@ -321,7 +327,7 @@ router.post("/book", (req, res) => {
                     sqlQuery = "insert into hall_booking values (?,?,?,?,?,0);";
                     con.query(sqlQuery, [date,startTime,endTime,hall_id,loggedInUser], function(err, results){
                     if(err) throw err;
-                    if(cookieObj[0].Privilege == 'admin'){
+                    if(cookieObj[0].Privilege == 'admin' || cookieObj[0].Privilege == 'Admin'){
                       const alert = `<script>alert('Hall booking request sent. Please await approval from competent authority.'); window.location.href = '/UI/adminDashboard.html';</script>`;
                       res.send(alert);
                     } else {

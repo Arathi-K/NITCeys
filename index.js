@@ -29,7 +29,24 @@ app.get('/logout', (req, res) => {
   res.clearCookie('user'); 
   res.redirect('/UI/login.html'); 
 });
+
+function flushDB(required_date){
+  const delQuery = 'delete from hall_booking where date_ < ?';
+  con.query(delQuery, [required_date], (err,results) => {
+    if (err) throw err;
+    else{
+      console.log('flushed database');
+    }
+  })
+}
+
 app.get('/', (req, res) => {
+  const today = new Date();
+  const todays_date = today.getDate();
+  const month = today.getMonth() + 1;
+  const year =  today.getFullYear();
+  const requiredDate = String(year) + '-' + String(month) + '-' + String(todays_date);
+  flushDB(requiredDate);
   res.sendFile(path.join(__dirname, 'UI', 'login.html'));
 });
 

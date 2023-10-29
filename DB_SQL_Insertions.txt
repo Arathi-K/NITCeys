@@ -1,22 +1,5 @@
 -- Creating the tables
 
-CREATE TABLE Hall (
-    Hall_id VARCHAR(255) PRIMARY KEY,
-    Hall_name VARCHAR(255),
-    location VARCHAR(255)
-);
-
-CREATE TABLE Hall_Booking (
-    Date_ DATE,
-    Start_time TIME,
-    End_time TIME,
-    Hall_id VARCHAR(255),
-    User_id VARCHAR(255),
-    is_approved BOOLEAN,
-    reason VARCHAR(1000),
-    FOREIGN KEY (Hall_id) REFERENCES Hall(Hall_id)
-);
-
 CREATE TABLE User (
     User_id VARCHAR(255) PRIMARY KEY,
     Name VARCHAR(255),
@@ -38,6 +21,23 @@ CREATE TABLE Classroom (
     Building VARCHAR(255),
     Room_no VARCHAR(255),
     is_available BOOLEAN
+);
+CREATE TABLE Hall (
+    Hall_id VARCHAR(255) PRIMARY KEY,
+    Hall_name VARCHAR(255),
+    location VARCHAR(255)
+);
+
+CREATE TABLE Hall_Booking (
+    Date_ DATE,
+    Start_time TIME,
+    End_time TIME,
+    Hall_id VARCHAR(255),
+    User_id VARCHAR(255),
+    is_approved BOOLEAN,
+    reason VARCHAR(255),
+    PRIMARY KEY (Date_, Start_time, End_time, Hall_id, User_id, is_approved, reason),
+    FOREIGN KEY (Hall_id) REFERENCES Hall(Hall_id)
 );
 
 CREATE TABLE Key_Assignment (
@@ -121,10 +121,10 @@ INSERT INTO User VALUES ('T4ME', 'Lalit Mohan', 'MECH', '9876523456', '1234', 'F
 
 
 ADMIN:
-INSERT INTO Admin VALUES ('A1', 'Rajashekar Naidu', '7890', 'admin');
-INSERT INTO Admin VALUES ('A2', 'Sreelakshmi Raj', '7890', 'admin');
-INSERT INTO Admin VALUES ('A3', 'Rishit Kumar Chordia', '7890', 'admin');
-INSERT INTO Admin VALUES ('A4', 'Rahul Jeevan Singh', '7890', 'admin');
+INSERT INTO Admin VALUES ('A1', 'Rajashekar Naidu', '7890', 'Admin');
+INSERT INTO Admin VALUES ('A2', 'Sreelakshmi Raj', '7890', 'Admin');
+INSERT INTO Admin VALUES ('A3', 'Rishit Kumar Chordia', '7890', 'Admin');
+INSERT INTO Admin VALUES ('A4', 'Rahul Jeevan Singh', '7890', 'Admin');
 
 
 
@@ -169,38 +169,37 @@ HALL:
 
 INSERT INTO Hall VALUES ('H1', 'Auditorium', 'Location1');
 INSERT INTO Hall VALUES ('H2', 'Aryabhatta', 'Location2');
-INSERT INTO Hall VALUES ('H3', 'Chanakya', 'Location1');
-INSERT INTO Hall VALUES ('H4', 'Bhaskara', 'Location2');
+INSERT INTO Hall VALUES ('H3', 'Chanakya', 'Location3');
+INSERT INTO Hall VALUES ('H4', 'Bhaskara', 'Location4');
 INSERT INTO Hall VALUES ('H5', 'CSED Seminar', 'CSED Building');
-INSERT INTO Hall VALUES ('H6', 'ECED', 'Location2');
+INSERT INTO Hall VALUES ('H6', 'ECED', 'Location5');
 INSERT INTO Hall VALUES ('H7', 'EED', 'DB');
-INSERT INTO Hall VALUES ('H8', 'MED', 'Location2');
-INSERT INTO Hall VALUES ('H9', 'CED', 'Location1');
-INSERT INTO Hall VALUES ('H10', 'CHED', 'Location2');
-INSERT INTO Hall VALUES ('H11', 'BTED', 'Location1');
-INSERT INTO Hall VALUES ('H12', 'PROD', 'Location2');
+INSERT INTO Hall VALUES ('H8', 'MED', 'Location6');
+INSERT INTO Hall VALUES ('H9', 'CED', 'Location7');
+INSERT INTO Hall VALUES ('H10', 'CHED', 'Location8');
+INSERT INTO Hall VALUES ('H11', 'BTED', 'Location9');
+INSERT INTO Hall VALUES ('H12', 'PROD', 'Location10');
 INSERT INTO Hall VALUES ('H13', 'APJ', 'CSED Building');
-INSERT INTO Hall VALUES ('H14', 'SOMS Auditorium', 'Location2');
-INSERT INTO Hall VALUES ('H15', 'OAT', 'Location1');
+INSERT INTO Hall VALUES ('H14', 'SOMS Auditorium', 'Location11');
+INSERT INTO Hall VALUES ('H15', 'OAT', 'Location12');
+
 
 
 HALL BOOKING:
-INSERT INTO Hall_Booking VALUES ('2023-10-20', '09:00:00', '11:00:00', 'H9', 'B22345CE', TRUE);
-INSERT INTO Hall_Booking VALUES ('2023-10-21', '10:00:00', '12:00:00', 'H5', 'B20601CS', TRUE);
-INSERT INTO Hall_Booking VALUES ('2023-10-22', '13:00:00', '15:00:00', 'H3', 'B21578EC', FALSE);
-INSERT INTO Hall_Booking VALUES ('2023-10-23', '14:00:00', '16:00:00', 'H7', 'B23090EE', TRUE);
-INSERT INTO Hall_Booking VALUES ('2023-10-24', '11:00:00', '13:00:00', 'H2', 'B22023BT', FALSE);
-INSERT INTO Hall_Booking VALUES ('2023-10-25', '09:30:00', '11:30:00', 'H4', 'B24567ME', TRUE);
-
-
+INSERT INTO Hall_Booking VALUES ('2023-10-20', '09:00:00', '11:00:00', 'H9', 'B22345CE', TRUE,'Project Presentation');
+INSERT INTO Hall_Booking VALUES ('2023-10-21', '10:00:00', '12:00:00', 'H5', 'B20601CS', TRUE,'PrePlacement Talk');
+INSERT INTO Hall_Booking VALUES ('2023-10-22', '13:00:00', '15:00:00', 'H3', 'B21578EC', FALSE,'HOPE Orientation');
+INSERT INTO Hall_Booking VALUES ('2023-10-23', '14:00:00', '16:00:00', 'H7', 'B23090EE', TRUE,'EEE Farewell');
+INSERT INTO Hall_Booking VALUES ('2023-10-24', '11:00:00', '13:00:00', 'H2', 'B22023BT', FALSE,'Project Presentation');
+INSERT INTO Hall_Booking VALUES ('2023-12-25', '09:30:00', '11:30:00', 'H4', 'B24567ME', TRUE,'CSE Christmas Celebration');
 
 KEY ASSIGNMENT:
-INSERT INTO Key_Assignment VALUES ('2023-10-20', '08:00:00', '9:00:00', 'B20123CS', 'R102', TRUE, FALSE);
-INSERT INTO Key_Assignment VALUES ('2023-10-21', '09:00:00', '10:00:00', 'B21256CS', 'R106', TRUE, FALSE);
-INSERT INTO Key_Assignment VALUES ('2023-10-22', '8:00:00', '9:00:00', 'B20456CS', 'R107', TRUE, TRUE);
-INSERT INTO Key_Assignment VALUES ('2023-10-23', '11:00:00', '12:00:00', 'B20501CS', 'R112', TRUE, FALSE);
-INSERT INTO Key_Assignment VALUES ('2023-10-24', '9:00:00', '10:00:00', 'B22345CE', 'R126', TRUE, TRUE);
-INSERT INTO Key_Assignment VALUES ('2023-10-25', '10:00:00', '11:00:00', 'B23367EE', 'R109', TRUE, FALSE);
+INSERT INTO Key_Assignment VALUES ('2023-10-20', '08:00:00', 'B20123CS', 'R102', TRUE, FALSE);
+INSERT INTO Key_Assignment VALUES ('2023-10-21', '09:00:00', 'B21256CS', 'R106', TRUE, FALSE);
+INSERT INTO Key_Assignment VALUES ('2023-10-22', '8:00:00', 'B20456CS', 'R107', TRUE, TRUE);
+INSERT INTO Key_Assignment VALUES ('2023-10-23', '11:00:00','B20501CS', 'R112', TRUE, FALSE);
+INSERT INTO Key_Assignment VALUES ('2023-10-24', '9:00:00','B22345CE', 'R126', TRUE, TRUE);
+INSERT INTO Key_Assignment VALUES ('2023-10-25', '10:00:00', 'B23367EE', 'R109', TRUE, FALSE);
 
 
 

@@ -13,6 +13,7 @@ CREATE TABLE Hall_Booking (
     Hall_id VARCHAR(255),
     User_id VARCHAR(255),
     is_approved BOOLEAN,
+    reason VARCHAR(1000),
     FOREIGN KEY (Hall_id) REFERENCES Hall(Hall_id)
 );
 
@@ -42,85 +43,80 @@ CREATE TABLE Classroom (
 CREATE TABLE Key_Assignment (
     Date_ DATE,
     Taking_time TIME,
-    Returning_time TIME,
     User_id VARCHAR(255),
     Room_id VARCHAR(255),
     Box_key BOOLEAN,
-    is_verified BOOLEAN,
+    is_returned BOOLEAN,
     FOREIGN KEY (User_id) REFERENCES User(User_id),
     FOREIGN KEY (Room_id) REFERENCES Classroom(Room_id)
 );
 
 
 USER:
+INSERT INTO User VALUES ('B20123CS', 'Amritha H Prabhu', 'CS', '1234567890', '1234', 'Student');
+INSERT INTO User VALUES ('B21145CH', 'Tejaswini R', 'CHEM', '1234567891', '1234', 'Student');
+INSERT INTO User VALUES ('B22167EE', 'Hotha Durga Swetha', 'EEE', '1234567892', '1234', 'Student');
+INSERT INTO User VALUES ('B20189BT', 'Arathi K', 'Biotech', '1234567893', '1234', 'Student');
+INSERT INTO User VALUES ('B21321ME', 'Vaisakh Ramachandran', 'MECH', '1234567894', '1234', 'Student');
+INSERT INTO User VALUES ('B20234EC', 'Jackson Stephan', 'ECE', '1234567895', '1234', 'Student');
+INSERT INTO User VALUES ('B21256CS', 'G Gautham Krishna', 'CS', '1234567896', '1234', 'Student');
+INSERT INTO User VALUES ('B22345CE', 'Sreeranjini S', 'CIVIL', '1234567897', '1234', 'Student');
+INSERT INTO User VALUES ('B23367EE', 'Vandkadoth Gayathri', 'EEE', '1234567898', '1234', 'Student');
+INSERT INTO User VALUES ('B21389BT', 'Rakshith Rao', 'Biotech', '1234567899', '1234', 'Student');
+INSERT INTO User VALUES ('B20456CS', 'Rhuthuvarna S P', 'CS', '1234578901', '1234', 'Student');
+INSERT INTO User VALUES ('B21567CE', 'V G Vaishali', 'CIVIL', '1234578902', '1234', 'Student');
+INSERT INTO User VALUES ('B22678EE', 'Aaron Joseph', 'EEE', '1234578903', '1234', 'Student');
+INSERT INTO User VALUES ('B23789BT', 'Sidharth Deepesh', 'Biotech', '1234578904', '1234', 'Student');
+INSERT INTO User VALUES ('B24890ME', 'Natasha Das', 'MECH', '1234578905', '1234', 'Student');
+INSERT INTO User VALUES ('B20501CS', 'Mukesh Rai', 'CS', '1234578906', '1234', 'Student');
+INSERT INTO User VALUES ('B21512CH', 'Pooja Sharma', 'CHEM', '1234578907', '1234', 'Student');
+INSERT INTO User VALUES ('B22523EE', 'Rohan Nair', 'EEE', '1234578908', '1234', 'Student');
+INSERT INTO User VALUES ('B23534BT', 'Sneha Iyer', 'Biotech', '1234578909', '1234', 'Student');
+INSERT INTO User VALUES ('B24545ME', 'Vishal Gupta', 'MECH', '1234578910', '1234', 'Student');
+INSERT INTO User VALUES ('B20556EC', 'Lakshmi Menon', 'ECE', '1234578911', '1234', 'Student');
+INSERT INTO User VALUES ('B21567CS', 'Aditya Kumar', 'CS', '1234578912', '1234', 'Student');
+INSERT INTO User VALUES ('B22578CH', 'Meera Singh', 'CHEM', '1234578913', '1234', 'Student');
+INSERT INTO User VALUES ('B23589EE', 'Nikhil Patil', 'EEE', '1234578914', '1234', 'Student');
+INSERT INTO User VALUES ('B24590BT', 'Kavya Reddy', 'Biotech', '1234578915', '1234', 'Student');
+INSERT INTO User VALUES ('B20601CS', 'Anirudh Joshi', 'CS', '1234578916', '1234', 'Student');
+INSERT INTO User VALUES ('B21612CE', 'Ritika Agarwal', 'CIVIL', '1234578917', '1234', 'Student');
+INSERT INTO User VALUES ('B22623EE', 'Karan Malhotra', 'EEE', '1234578918', '1234', 'Student');
+INSERT INTO User VALUES ('B23634BT', 'Ananya Chatterjee', 'Biotech', '1234578919', '1234', 'Student');
+INSERT INTO User VALUES ('B24645ME', 'Bhavesh Patel', 'MECH', '1234578920', '1234', 'Student');
+INSERT INTO User VALUES ('B20656EC', 'Priyanka Varma', 'ECE', '1234578921', '1234', 'Student');
+INSERT INTO User VALUES ('B21667CS', 'Rahul Menon', 'CS', '1234578922', '1234', 'Student');
+INSERT INTO User VALUES ('B22678CE', 'Swetha Naidu', 'CIVIL', '1234578923', '1234', 'Student');
+INSERT INTO User VALUES ('B23689EE', 'Jatin Sareen', 'EEE', '1234578924', '1234', 'Student');
+INSERT INTO User VALUES ('B24690BT', 'Divya Paul', 'Biotech', '1234578925', '1234', 'Student');
+INSERT INTO User VALUES ('T1CS', 'Rohit Sharma', 'CS', '9876512342', '1234', 'Faculty');
+INSERT INTO User VALUES ('T2CS', 'Krishna Reddy', 'CS', '9876512348', '1234', 'Faculty');
+INSERT INTO User VALUES ('T3CS', 'Bhuvanesh Dubey', 'CS', '9876523452', '1234', 'Faculty');
+INSERT INTO User VALUES ('T4CS', 'Sushant Singh', 'CS', '9876523458', '1234', 'Faculty');
 
-INSERT INTO User VALUES ('B20123CS', 'Amritha H Prabhu', 'CS', '1234567890', '1234', 'student');
-INSERT INTO User VALUES ('B21145CH', 'Tejaswini R', 'CHEM', '1234567891', '1234', 'student');
-INSERT INTO User VALUES ('B22167EE', 'Hotha Durga Swetha', 'EEE', '1234567892', '1234', 'student');
-INSERT INTO User VALUES ('B20189BT', 'Arathi K', 'Biotech', '1234567893', '1234', 'student');
-INSERT INTO User VALUES ('B21321ME', 'Vaisakh Ramachandran', 'MECH', '1234567894', '1234', 'student');
-INSERT INTO User VALUES ('B20234EC', 'Jackson Stephan', 'ECE', '1234567895', '1234', 'student');
-INSERT INTO User VALUES ('B21256CS', 'G Gautham Krishna', 'CS', '1234567896', '1234', 'student');
-INSERT INTO User VALUES ('B22345CE', 'Sreeranjini S', 'CIVIL', '1234567897', '1234', 'student');
-INSERT INTO User VALUES ('B23367EE', 'Vandkadoth Gayathri', 'EEE', '1234567898', '1234', 'student');
-INSERT INTO User VALUES ('B21389BT', 'Rakshith Rao', 'Biotech', '1234567899', '1234', 'student');
-INSERT INTO User VALUES ('B20456CS', 'Rhuthuvarna S P', 'CS', '1234578901', '1234', 'student');
-INSERT INTO User VALUES ('B21567CE', 'V G Vaishali', 'CIVIL', '1234578902', '1234', 'student');
-INSERT INTO User VALUES ('B22678EE', 'Aaron Joseph', 'EEE', '1234578903', '1234', 'student');
-INSERT INTO User VALUES ('B23789BT', 'Sidharth Deepesh', 'Biotech', '1234578904', '1234', 'student');
-INSERT INTO User VALUES ('B24890ME', 'Natasha Das', 'MECH', '1234578905', '1234', 'student');
-INSERT INTO User VALUES ('B20501CS', 'Mukesh Rai', 'CS', '1234578906', '1234', 'student');
-INSERT INTO User VALUES ('B21512CH', 'Pooja Sharma', 'CHEM', '1234578907', '1234', 'student');
-INSERT INTO User VALUES ('B22523EE', 'Rohan Nair', 'EEE', '1234578908', '1234', 'student');
-INSERT INTO User VALUES ('B23534BT', 'Sneha Iyer', 'Biotech', '1234578909', '1234', 'student');
-INSERT INTO User VALUES ('B24545ME', 'Vishal Gupta', 'MECH', '1234578910', '1234', 'student');
-INSERT INTO User VALUES ('B24545ME', 'Vishal Gupta', 'MECH', '1234578910', '1234', 'student');
-INSERT INTO User VALUES ('B20556EC', 'Lakshmi Menon', 'ECE', '1234578911', '1234', 'student');
-INSERT INTO User VALUES ('B21567CS', 'Aditya Kumar', 'CS', '1234578912', '1234', 'student');
-INSERT INTO User VALUES ('B22578CH', 'Meera Singh', 'CHEM', '1234578913', '1234', 'student');
-INSERT INTO User VALUES ('B23589EE', 'Nikhil Patil', 'EEE', '1234578914', '1234', 'student');
-INSERT INTO User VALUES ('B24590BT', 'Kavya Reddy', 'Biotech', '1234578915', '1234', 'student');
-INSERT INTO User VALUES ('B20601CS', 'Anirudh Joshi', 'CS', '1234578916', '1234', 'student');
-INSERT INTO User VALUES ('B21612CE', 'Ritika Agarwal', 'CIVIL', '1234578917', '1234', 'student');
-INSERT INTO User VALUES ('B22623EE', 'Karan Malhotra', 'EEE', '1234578918', '1234', 'student');
-INSERT INTO User VALUES ('B23634BT', 'Ananya Chatterjee', 'Biotech', '1234578919', '1234', 'student');
-INSERT INTO User VALUES ('B24645ME', 'Bhavesh Patel', 'MECH', '1234578920', '1234', 'student');
-INSERT INTO User VALUES ('B20656EC', 'Priyanka Varma', 'ECE', '1234578921', '1234', 'student');
-INSERT INTO User VALUES ('B21667CS', 'Rahul Menon', 'CS', '1234578922', '1234', 'student');
-INSERT INTO User VALUES ('B22678CE', 'Swetha Naidu', 'CIVIL', '1234578923', '1234', 'student');
-INSERT INTO User VALUES ('B23689EE', 'Jatin Sareen', 'EEE', '1234578924', '1234', 'student');
-INSERT INTO User VALUES ('B24690BT', 'Divya Paul', 'Biotech', '1234578925', '1234', 'student');
+INSERT INTO User VALUES ('T1EC', 'Anjali Krishnan', 'ECE', '9876512341', '1234', 'Faculty');
+INSERT INTO User VALUES ('T2EC', 'Rajni Gupta', 'ECE', '9876512347', '1234', 'Faculty');
+INSERT INTO User VALUES ('T3EC', 'Radhika Desai', 'ECE', '9876523451', '1234', 'Faculty');
+INSERT INTO User VALUES ('T4EC', 'Geeta Kapoor', 'ECE', '9876523457', '1234', 'Faculty');
 
-INSERT INTO User VALUES ('T1CS', 'Rohit Sharma', 'CS', '9876512342', '1234', 'teacher');
-INSERT INTO User VALUES ('T2CS', 'Krishna Reddy', 'CS', '9876512348', '1234', 'teacher');
-INSERT INTO User VALUES ('T3CS', 'Bhuvanesh Dubey', 'CS', '9876523452', '1234', 'teacher');
-INSERT INTO User VALUES ('T4CS', 'Sushant Singh', 'CS', '9876523458', '1234', 'teacher');
+INSERT INTO User VALUES ('T1CE', 'Poonam Bhatt', 'CHEM', '9876512343', '1234', 'Faculty');
+INSERT INTO User VALUES ('T2CE', 'Kiran Kulkarni', 'CHEM', '9876512349', '1234', 'Faculty');
+INSERT INTO User VALUES ('T3CE', 'Nandini Patel', 'CHEM', '9876523453', '1234', 'Faculty');
+INSERT INTO User VALUES ('T4CE', 'Rima Sen', 'CHEM', '9876523459', '1234', 'Faculty');
 
-INSERT INTO User VALUES ('T1EC', 'Anjali Krishnan', 'ECE', '9876512341', '1234', 'teacher');
-INSERT INTO User VALUES ('T2EC', 'Rajni Gupta', 'ECE', '9876512347', '1234', 'teacher');
-INSERT INTO User VALUES ('T3EC', 'Radhika Desai', 'ECE', '9876523451', '1234', 'teacher');
-INSERT INTO User VALUES ('T4EC', 'Geeta Kapoor', 'ECE', '9876523457', '1234', 'teacher');
+INSERT INTO User VALUES ('T1EE', 'Kishore Kumar', 'EEE', '9876512344', '1234', 'Faculty');
+INSERT INTO User VALUES ('T2EE', 'Lalita Rao', 'EEE', '9876512350', '1234', 'Faculty');
+INSERT INTO User VALUES ('T3EE', 'Karan Oberoi', 'EEE', '9876523454', '1234', 'Faculty');
+INSERT INTO User VALUES ('T4EE', 'Vinod Kumar', 'EEE', '9876523460', '1234', 'Faculty');
 
-INSERT INTO User VALUES ('T1CE', 'Poonam Bhatt', 'CHEM', '9876512343', '1234', 'teacher');
-INSERT INTO User VALUES ('T2CE', 'Kiran Kulkarni', 'CHEM', '9876512349', '1234', 'teacher');
-INSERT INTO User VALUES ('T3CE', 'Nandini Patel', 'CHEM', '9876523453', '1234', 'teacher');
-INSERT INTO User VALUES ('T4CE', 'Rima Sen', 'CHEM', '9876523459', '1234', 'teacher');
+INSERT INTO User VALUES ('T1BT', 'Rekha Suresh', 'Biotech', '9876512345', '1234', 'Faculty');
+INSERT INTO User VALUES ('T2BT', 'Brijesh Kumar', 'Biotech', '9876512351', '1234', 'Faculty');
+INSERT INTO User VALUES ('T3BT', 'Shreya Ghoshal', 'Biotech', '9876523455', '1234', 'Faculty');
+INSERT INTO User VALUES ('T4BT', 'Shefali Alvaris', 'Biotech', '9876523461', '1234', 'Faculty');
 
-INSERT INTO User VALUES ('T1EE', 'Kishore Kumar', 'EEE', '9876512344', '1234', 'teacher');
-INSERT INTO User VALUES ('T2EE', 'Lalita Rao', 'EEE', '9876512350', '1234', 'teacher');
-INSERT INTO User VALUES ('T3EE', 'Karan Oberoi', 'EEE', '9876523454', '1234', 'teacher');
-INSERT INTO User VALUES ('T4EE', 'Vinod Kumar', 'EEE', '9876523460', '1234', 'teacher');
-
-INSERT INTO User VALUES ('T1BT', 'Rekha Suresh', 'Biotech', '9876512345', '1234', 'teacher');
-INSERT INTO User VALUES ('T2BT', 'Brijesh Kumar', 'Biotech', '9876512351', '1234', 'teacher');
-INSERT INTO User VALUES ('T3BT', 'Shreya Ghoshal', 'Biotech', '9876523455', '1234', 'teacher');
-INSERT INTO User VALUES ('T4BT', 'Shefali Alvaris', 'Biotech', '9876523461', '1234', 'teacher');
-
-INSERT INTO User VALUES ('T1ME', 'Sanjay Verma', 'MECH', '9876512340', '1234', 'teacher');
-INSERT INTO User VALUES ('T2ME', 'Mohanlal Joshi', 'MECH', '9876512346', '1234', 'teacher');
-INSERT INTO User VALUES ('T3ME', 'Vijay Prakash', 'MECH', '9876523450', '1234', 'teacher');
-INSERT INTO User VALUES ('T4ME', 'Lalit Mohan', 'MECH', '9876523456', '1234', 'teacher');
-
+INSERT INTO User VALUES ('T1ME', 'Sanjay Verma', 'MECH', '9876512340', '1234', 'Faculty');
+INSERT INTO User VALUES ('T2ME', 'Mohanlal Joshi', 'MECH', '9876512346', '1234', 'Faculty');
+INSERT INTO User VALUES ('T3ME', 'Vijay Prakash', 'MECH', '9876523450', '1234', 'Faculty');
+INSERT INTO User VALUES ('T4ME', 'Lalit Mohan', 'MECH', '9876523456', '1234', 'Faculty');
 
 
 

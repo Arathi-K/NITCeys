@@ -1,0 +1,202 @@
+===Database nitceys
+
+== Table structure for table admin
+
+|------
+|Column|Type|Null|Default
+|------
+|//**Admin_id**//|varchar(255)|No|
+|Name|varchar(255)|Yes|NULL
+|Password|varchar(255)|Yes|NULL
+|Privilege|varchar(255)|Yes|NULL
+== Dumping data for table admin
+
+|A1|Rajashekar Naidu|7890|Admin
+|A2|Sreelakshmi Raj|7890|Admin
+|A3|Rishit Kumar Chordia|7890|Admin
+|A4|Rahul Jeevan Singh|7890|Admin
+== Table structure for table classroom
+
+|------
+|Column|Type|Null|Default
+|------
+|//**Room_id**//|varchar(255)|No|
+|Building|varchar(255)|Yes|NULL
+|Room_no|varchar(255)|Yes|NULL
+|is_available|tinyint(1)|Yes|NULL
+== Dumping data for table classroom
+
+|R100|ELHC|101|1
+|R101|ELHC|102|0
+|R102|ELHC|103|1
+|R103|ELHC|104|1
+|R104|ELHC|201|1
+|R105|ELHC|202|0
+|R106|ELHC|203|0
+|R107|ELHC|204|1
+|R108|ELHC|301|1
+|R109|ELHC|302|1
+|R110|ELHC|303|0
+|R111|ELHC|304|1
+|R112|ELHC|401|0
+|R113|ELHC|402|1
+|R114|ELHC|403|1
+|R115|ELHC|404|1
+|R116|NLHC|101|1
+|R117|NLHC|102|1
+|R118|NLHC|103|0
+|R119|NLHC|104|1
+|R120|NLHC|201|1
+|R121|NLHC|202|1
+|R122|NLHC|203|0
+|R123|NLHC|204|1
+|R124|NLHC|301|1
+|R125|NLHC|302|1
+|R126|NLHC|303|0
+|R127|NLHC|304|1
+|R128|NLHC|401|0
+|R129|NLHC|402|1
+|R130|NLHC|403|1
+|R131|NLHC|404|1
+|R132|MB|101|1
+|R133|MB|201|1
+|R134|MB|301|1
+== Table structure for table hall
+
+|------
+|Column|Type|Null|Default
+|------
+|//**Hall_id**//|varchar(255)|No|
+|Hall_name|varchar(255)|Yes|NULL
+|location|varchar(255)|Yes|NULL
+== Dumping data for table hall
+
+|H1|Auditorium|Location1
+|H10|CHED|Location8
+|H11|BTED|Location9
+|H12|PROD|Location10
+|H13|APJ|CSED Building
+|H14|SOMS Auditorium|Location11
+|H15|OAT|Location12
+|H2|Aryabhatta|Location2
+|H3|Chanakya|Location3
+|H4|Bhaskara|Location4
+|H5|CSED Seminar|CSED Building
+|H6|ECED|Location5
+|H7|EED|DB
+|H8|MED|Location6
+|H9|CED|Location7
+== Table structure for table hall_booking
+
+|------
+|Column|Type|Null|Default
+|------
+|//**Date_**//|date|No|
+|//**Start_time**//|time|No|
+|//**End_time**//|time|No|
+|//**Hall_id**//|varchar(255)|No|
+|//**User_id**//|varchar(255)|No|
+|//**is_approved**//|tinyint(1)|No|
+|//**reason**//|varchar(255)|No|
+== Dumping data for table hall_booking
+
+|2023-11-17|11:00:00|12:30:00|H10|B20123CS|1|WebP presentation
+|2023-11-20|09:00:00|11:00:00|H9|B22345CE|1|Project Presentation
+|2023-11-20|12:00:00|13:00:00|H10|B20123CS|1|SGC INDUCTION
+|2023-11-22|13:00:00|15:00:00|H3|B21578EC|1|HOPE Orientation
+|2023-12-21|10:00:00|12:00:00|H5|B20601CS|1|PrePlacement Talk
+|2023-12-25|09:30:00|11:30:00|H4|B24567ME|0|Mech Christmas Celebration
+|2024-01-05|13:00:00|14:00:00|H11|B20123CS|1|Sgc orientation
+|2024-01-23|14:00:00|16:00:00|H7|B23090EE|1|EEE Farewell
+== Table structure for table key_assignment
+
+|------
+|Column|Type|Null|Default
+|------
+|Date_|date|Yes|NULL
+|Taking_time|time|Yes|NULL
+|User_id|varchar(255)|Yes|NULL
+|Room_id|varchar(255)|Yes|NULL
+|Box_key|tinyint(1)|Yes|NULL
+|is_returned|tinyint(1)|Yes|NULL
+== Dumping data for table key_assignment
+
+|2023-10-21|09:00:00|B21256CS|R106|1|0
+|2023-10-22|08:00:00|B20456CS|R107|1|1
+|2023-10-23|11:00:00|B20501CS|R112|1|0
+|2023-10-24|09:00:00|B22345CE|R126|1|1
+|2023-10-25|10:00:00|B23367EE|R109|1|0
+|2024-02-12|14:02:00|B20189BT|R101|0|0
+|2024-01-01|13:00:00|B20501CS|R105|1|0
+== Table structure for table user
+
+|------
+|Column|Type|Null|Default
+|------
+|//**User_id**//|varchar(255)|No|
+|Name|varchar(255)|Yes|NULL
+|Department|varchar(255)|Yes|NULL
+|Phone_number|varchar(255)|Yes|NULL
+|Password|varchar(255)|Yes|NULL
+|role|varchar(255)|Yes|NULL
+== Dumping data for table user
+
+|B20123CS|Amritha H Prabhu|CS|9037123456|4321|Student
+|B20189BT|Arathi K|Biotech|1234567893|1234|Student
+|B20234EC|Jackson Stephan|ECE|1234567895|1234|Student
+|B20456CS|Rhuthuvarna S P|CS|1234578901|1234|Student
+|B20501CS|Mukesh Rai|CS|1234578906|1234|Student
+|B20556EC|Lakshmi Menon|ECE|1234578911|1234|Student
+|B20601CS|Anirudh Joshi|CS|1234578916|1234|Student
+|B20656EC|Priyanka Varma|ECE|1234578921|1234|Student
+|B21145CH|Tejaswini R|CHEM|1234567891|1234|Student
+|B21256CS|G Gautham Krishna|CS|1234567896|1234|Student
+|B21321ME|Vaisakh Ramachandran|MECH|1234567894|1234|Student
+|B21389BT|Rakshith Rao|Biotech|1234567899|1234|Student
+|B21512CH|Pooja Sharma|CHEM|1234578907|1234|Student
+|B21567CE|V G Vaishali|CIVIL|1234578902|1234|Student
+|B21567CS|Aditya Kumar|CS|1234578912|1234|Student
+|B21612CE|Ritika Agarwal|CIVIL|1234578917|1234|Student
+|B21667CS|Rahul Menon|CS|1234578922|1234|Student
+|B22167EE|Hotha Durga Swetha|EEE|1234567892|1234|Student
+|B22345CE|Sreeranjini S|CIVIL|1234567897|1234|Student
+|B22523EE|Rohan Nair|EEE|1234578908|1234|Student
+|B22578CH|Meera Singh|CHEM|1234578913|1234|Student
+|B22623EE|Karan Malhotra|EEE|1234578918|1234|Student
+|B22678CE|Swetha Naidu|CIVIL|1234578923|1234|Student
+|B22678EE|Aaron Joseph|EEE|1234578903|1234|Student
+|B23367EE|Vandkadoth Gayathri|EEE|1234567898|1234|Student
+|B23534BT|Sneha Iyer|Biotech|1234578909|1234|Student
+|B23589EE|Nikhil Patil|EEE|1234578914|1234|Student
+|B23634BT|Ananya Chatterjee|Biotech|1234578919|1234|Student
+|B23689EE|Jatin Sareen|EEE|1234578924|1234|Student
+|B23789BT|Sidharth Deepesh|Biotech|1234578904|1234|Student
+|B24545ME|Vishal Gupta|MECH|1234578910|1234|Student
+|B24590BT|Kavya Reddy|Biotech|1234578915|1234|Student
+|B24645ME|Bhavesh Patel|MECH|1234578920|1234|Student
+|B24690BT|Divya Paul|Biotech|1234578925|1234|Student
+|B24890ME|Natasha Das|MECH|1234578905|1234|Student
+|T1BT|Rekha Suresh|Biotech|9876512345|1234|Faculty
+|T1CE|Poonam Bhatt|CHEM|9876512343|1234|Faculty
+|T1CS|Rohit Sharma|CS|9876512342|1234|Faculty
+|T1EC|Anjali Krishnan|ECE|9876512341|1234|Faculty
+|T1EE|Kishore Kumar|EEE|9876512344|1234|Faculty
+|T1ME|Sanjay Verma|MECH|9876512340|1234|Faculty
+|T2BT|Brijesh Kumar|Biotech|9876512351|1234|Faculty
+|T2CE|Kiran Kulkarni|CHEM|9876512349|1234|Faculty
+|T2CS|Krishna Reddy|CS|9876512348|1234|Faculty
+|T2EC|Rajni Gupta|ECE|9876512347|1234|Faculty
+|T2EE|Lalita Rao|EEE|9876512350|1234|Faculty
+|T2ME|Mohanlal Joshi|MECH|9876512346|1234|Faculty
+|T3BT|Shreya Ghoshal|Biotech|9876523455|1234|Faculty
+|T3CE|Nandini Patel|CHEM|9876523453|1234|Faculty
+|T3CS|Bhuvanesh Dubey|CS|9876523452|1234|Faculty
+|T3EC|Radhika Desai|ECE|9876523451|1234|Faculty
+|T3EE|Karan Oberoi|EEE|9876523454|1234|Faculty
+|T3ME|Vijay Prakash|MECH|9876523450|1234|Faculty
+|T4BT|Shefali Alvaris|Biotech|9876523461|1234|Faculty
+|T4CE|Rima Sen|CHEM|9876523459|1234|Faculty
+|T4CS|Sushant Singh|CS|9876523458|1234|Faculty
+|T4EC|Geeta Kapoor|ECE|9876523457|1234|Faculty
+|T4EE|Vinod Kumar|EEE|9876523460|1234|Faculty
+|T4ME|Lalit Mohan|MECH|9876523456|1234|Faculty

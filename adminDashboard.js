@@ -13,10 +13,10 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.json()); // For parsing JSON bodies
 
 
-var sqlQuery = 'SELECT * from key_assignment NATURAL join user NATURAL join classroom where is_verified = 0'
+var sqlQuery = 'SELECT * from key_assignment NATURAL join user NATURAL join classroom where is_returned = 0'
 var sqlQuery2='SELECT * FROM hall_booking NATURAL join hall where is_approved = 0'
 var sqlQuery3='select * from hall'
-var sqlQuery4 = 'SELECT * from key_assignment NATURAL join user NATURAL join classroom where is_verified = 1'
+var sqlQuery4 = 'SELECT * from key_assignment NATURAL join user NATURAL join classroom where is_returned = 1'
 
 router.get('/UI/adminDashboard.html', (req, res) => {
     const fp = path.join(__dirname,'UI','adminDashboard.html');
@@ -119,13 +119,11 @@ router.get('/UI/adminDashboard.html', (req, res) => {
                     <br>
                     <strong>Request Date:</strong> ${formattedDate}
                     <br>
-                    <strong>Requested Time:</strong> ${row.Start_time}
-                    <br>
-                    <strong>Ending Time:</strong> ${row.End_time}
+                    <strong>Timing:</strong> ${row.Start_time}-${row.End_time}
                     <br>
                     <strong>User:</strong> ${row.User_id}
                     <br>
-                    <strong>Reason:</strong> Put column in db loosus
+                    <strong>Reason:</strong>${row.reason}
                 </div>
                 <div class="col-auto">
                     <button class="btn btn-primary approve-button" id="button-container-${i++}"
@@ -247,7 +245,7 @@ router.post('/deleteKeyholder', (req, res) => {
 
   console.log("HK",roomid,formattedDate,start,userId);
 
-  const delQuery = 'DELETE from key_assignment where Date_=? and Taking_time=? and Room_id=? and User_id=? and is_verified = 1';
+  const delQuery = 'DELETE from key_assignment where Date_=? and Taking_time=? and Room_id=? and User_id=? and is_returned = 1';
   const updQuery = 'Update classroom set is_available = 1 where Room_id =?';
   con.query(delQuery,[formattedDate,start,roomid,userId],(err, results)=>{
       if (err) throw err;
@@ -305,7 +303,7 @@ router.post("/book", (req, res) => {
     const alert = `<script>alert('Invalid date chosen.');window.history.back();</script>`
     return res.send(alert);
   }
-  if(startTime < current_time){
+  if(date == requiredDate && (startTime < current_time)){
     const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
     return res.send(alert);
   }
@@ -335,8 +333,8 @@ router.post("/book", (req, res) => {
                 con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
                   if(err) throw err;
                   if(results.length == 0){
-                    sqlQuery = "insert into hall_booking values (?,?,?,?,?,0);";
-                    con.query(sqlQuery, [date,startTime,endTime,hall_id,loggedInUser], function(err, results){
+                    sqlQuery = "insert into hall_booking values (?,?,?,?,?,0,?);";
+                    con.query(sqlQuery, [date,startTime,endTime,hall_id,loggedInUser,reason], function(err, results){
                     if(err) throw err;
                     
                     if(Object.keys(cookieObj[0]).length==4){

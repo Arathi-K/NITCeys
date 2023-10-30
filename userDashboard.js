@@ -26,8 +26,8 @@ function renderList(data) {
   });
   return selectHTML;
 }
-function renderPendingList(data){//add cancel request option
-  let selectHTML = '';
+function renderPendingList(data){
+    let selectHTML = '';
    data.forEach(item => {
     // console.log("debug1.",item.Start_time,item.Hall_id);
     const inputDate = new Date(item.Date_)
@@ -37,7 +37,7 @@ function renderPendingList(data){//add cancel request option
     const formattedDate = `${year}-${month}-${day}`
      selectHTML +=
      '<li class="list-group-item d-flex justify-content-between align-items-center">'+ 
-     `Hall Name: ${item.Hall_name}<br> Date: ${formattedDate}<br>Time: ${item.Start_time} - ${item.End_time}` +
+     `Hall Name: ${item.Hall_name}<br> Date: ${formattedDate}<br>Time: ${item.Start_time} - ${item.End_time}<br> Reason: ${item.reason}` +
       '<form action="/cancelRequest" method="post"><div class="form-group"><input type="text" hidden name="date" value="' + `${formattedDate}`+ '"><input type="text"  hidden name="Start_time" value="' + `${item.Start_time}` + '"><input type="text" hidden name="hallID" value="'+ `${item.Hall_id}` + '"><input type="text"  hidden name="HallName" value="'+`${item.Hall_name}`+'"></div><button class="btn btn-primary">Cancel</button></form></li>';
  });
    return selectHTML;
@@ -48,7 +48,7 @@ function renderKeyList(data){
   let list = '';
   data.forEach( item=>{
     let btns = ["Return Key", "btn-primary"]
-    if(item.is_verified===1){
+    if(item.is_returned===1){
       btns[0]="Returned"
       btns[1]="btn-secondary"
       list += '<li class="list-group-item d-flex justify-content-between align-items-center">'+ `${item.Building}` + ' ' + `${item.Room_no}`+ '<form action="/returned" method="post"><div class="form-group"><input type="text" hidden name="class" value="' + `${item.Room_id}` + '"></div><div class="btn-group"><button class="btn '+ `${btns[1]}`+ ' ml-1">'+ `${btns[0]}`+'</button></div></form></li>'
@@ -61,7 +61,7 @@ function renderKeyList(data){
 function renderApprovedList(data){
   let selectHTML = '';
    data.forEach(item => {
-     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `Hall Name: ${item.Hall_name} <br>Date: ${item.Date_} <br>Time: ${item.Start_time} - ${item.End_time}` + '</li>'  ;
+     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `Hall Name: ${item.Hall_name} <br>Date: ${item.Date_} <br>Time: ${item.Start_time} - ${item.End_time}<br> Reason: ${item.reason}` + '</li>'  ;
    });
    return selectHTML;
 }
@@ -81,6 +81,10 @@ router.get('/UI/studentdashboard.html', (req, res) => {
   const requiredDate = String(year) + '-' + String(month) + '-' + String(todays_date);
   console.log('date from dashboard',requiredDate);
   const cookieName = req.cookies.user;
+  if(!cookieName){
+    res.redirect("/UI/login.html")
+  }
+
   cookieObj = JSON.parse(cookieName);
   const htmlFilePath = path.join(__dirname, 'UI', 'studentdashboard.html')
   fs.readFile(htmlFilePath, 'utf-8', (err,data)=>{
@@ -94,12 +98,12 @@ router.get('/UI/studentdashboard.html', (req, res) => {
       html = renderList(results)
       modifiedHTML = modifiedHTML.replace('{{halls}}', html);
     }
-    const keyQuery = "select is_verified, Building, Room_no, classroom.Room_id from classroom, key_assignment where classroom.Room_id in (select Room_id from key_assignment where User_id=?) and classroom.Room_id = key_assignment.Room_id"
+    const keyQuery = "select is_returned, Building, Room_no, classroom.Room_id from classroom, key_assignment where classroom.Room_id in (select Room_id from key_assignment where User_id=?) and classroom.Room_id = key_assignment.Room_id"
     con.query(keyQuery, [cookieObj[0].User_id], (err, results)=>{
       if(err) throw err;
       html = renderKeyList(results);
       modifiedHTML = modifiedHTML.replace('{{KEYS}}', html);
-      const q ='SELECT hall.Hall_name, hall_booking.Hall_id, hall_booking.Date_, hall_booking.Start_time, hall_booking.End_time FROM hall INNER JOIN hall_booking ON hall.Hall_id = hall_booking.Hall_id WHERE hall_booking.is_approved = 0 AND hall_booking.User_id =?';
+      const q ='SELECT hall.Hall_name, hall_booking.Hall_id, hall_booking.Date_, hall_booking.Start_time, hall_booking.End_time,hall_booking.reason FROM hall INNER JOIN hall_booking ON hall.Hall_id = hall_booking.Hall_id WHERE hall_booking.is_approved = 0 AND hall_booking.User_id =?';
       con.query(q, [cookieObj[0].User_id], (e, r) => {
         if (e) {
           throw e;
@@ -108,7 +112,7 @@ router.get('/UI/studentdashboard.html', (req, res) => {
           html2 = renderPendingList(r)
           modifiedHTML = modifiedHTML.replace('{{pending}}', html2)
         }
-      const q3 = 'SELECT hall.Hall_name, hall_booking.Date_, hall_booking.Start_time,hall_booking.End_time FROM hall INNER JOIN hall_booking ON hall.Hall_id = hall_booking.Hall_id WHERE hall_booking.is_approved =1 and User_id=? and ? <= hall_booking.Date_';
+      const q3 = 'SELECT hall.Hall_name, hall_booking.Date_, hall_booking.Start_time,hall_booking.End_time,hall_booking.reason FROM hall INNER JOIN hall_booking ON hall.Hall_id = hall_booking.Hall_id WHERE hall_booking.is_approved =1 and User_id=? and ? <= hall_booking.Date_';
       con.query(q3,[cookieObj[0].User_id,requiredDate],(e, r) => {
         if (e) {
           throw e;
@@ -375,9 +379,15 @@ router.get("/UI/takeKey.html", (req, res)=>{
     }
     
     currentClass = req.query.ClassID;
-    console.log(currentClass)
-    modifiedHtml = modifiedHtml.replace('{{CLASSROOM}}', `${currentClass}`);
-    res.send(modifiedHtml);
+    var query = "Select Building, Room_no from classroom where Room_id = ?"
+    con.query(query,[currentClass],function(err,results){
+      if(err) throw err
+      if(results.length!==0){
+        modifiedHtml = modifiedHtml.replace('{{CLASSROOM}}', `${results[0].Building}`+ ' ' + `${results[0].Room_no}`);
+        res.send(modifiedHtml);
+      }
+    })
+    
   });   
 })
 
@@ -399,11 +409,10 @@ router.post("/takeKey", (req, res) => {
   const boxkey = req.body.boxkey || 0;  // corrected the sequence of OR (||) operation
   const date = req.body.date;
   const takingTime = req.body.takingTime;
-  const returningTime = null; //fake
   const room_id = currentClass;
 
-  const insertSqlQuery = "INSERT INTO key_assignment (Date_, Taking_time, Returning_time, User_id, Room_id, Box_key, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?)";
-  con.query(insertSqlQuery, [date, takingTime, returningTime, cookieObj[0].User_id, room_id, boxkey, 0], function(err, insertResults) {
+  const insertSqlQuery = "INSERT INTO key_assignment (Date_, Taking_time, User_id, Room_id, Box_key, is_returned) VALUES (?, ?, ?, ?, ?, ?)";
+  con.query(insertSqlQuery, [date, takingTime,cookieObj[0].User_id, room_id, boxkey, 0], function(err, insertResults) {
       if (err) throw err;
       else {
         const updateSqlQuery = "UPDATE Classroom SET is_available = 0 WHERE Room_id = ?";
@@ -495,13 +504,13 @@ router.post("/transfer",(req,resp)=>{
    const date = req.body.theDate
    const time = req.body.Time
    const phoneNo = req.body.phone
-   console.log(currentRoom)
+   console.log("transfer",currentRoom)
    const regex = /^\d{10}$/; // Regular expression to match exactly 10 digits
    if (regex.test(phoneNo)) {
     const phoneQuery = "Select User_id from user where Phone_number = ?"
     con.query(phoneQuery, [phoneNo], (err,results)=>{
       if(err) throw err
-      console.log(results);
+      // console.log(results);
       if(results.length===0){
         const alert =`<script>alert('Phone no entered is incorrect'); window.history.back();</script>`;
         resp.send(alert)
@@ -515,7 +524,8 @@ router.post("/transfer",(req,resp)=>{
       }
     })
   } else {
-     const alert =`<script>alert('Phone no should contain 10 digits'); window.location.href = '/UI/transferKeys.html';</script>`;
+     console.log("hiiiiiiii");
+     const alert =`<script>alert('Phone no should contain 10 digits');window.history.back();</script>`;
      resp.send(alert)
   }
    
@@ -523,7 +533,7 @@ router.post("/transfer",(req,resp)=>{
 router.post("/returned",(req,res)=>{
     let room = req.body.class;
     // console.log(req.body.class);
-    const query = "update key_assignment set is_verified = 1 where Room_id = ?"
+    const query = "update key_assignment set is_returned = 1 where Room_id = ?"
     con.query(query,[room],(err, results)=>{
       const alert =`<script>alert('Key return request submitted. Please await approval.'); window.location.href = '/UI/studentdashboard.html';</script>`;
       res.send(alert)

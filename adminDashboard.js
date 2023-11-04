@@ -158,7 +158,7 @@ router.post('/updateDatabase', (req, res) => {
     const start = req.body.start;
     const end = req.body.end;
     const userId = req.body.userId
-    console.log("Brr",hallid,formattedDate,start,end,userId);
+    //console.log("Brr",hallid,formattedDate,start,end,userId);
     let error_flag=0;
 
     const checkQuery = 'Select * from hall_booking where Date_=? and Hall_id=? and is_approved=1';
@@ -171,30 +171,30 @@ router.post('/updateDatabase', (req, res) => {
                     (row.Start_time>=start && row.End_time<=end) ||
                     (row.Start_time<=start && row.End_time>=end))
                 {
-                    console.log("Cannot approve, auto rejecting due to clash.");
+                    //console.log("Cannot approve, auto rejecting due to clash.");
                     error_flag=1;
-                    console.log(error_flag);
+                    //console.log(error_flag);
                 }
             });
-            console.log("gfg",error_flag);
+            //console.log("gfg",error_flag);
               if(error_flag!=1){
                 const sqlupd = 'UPDATE hall_booking set is_approved=1 where Date_=? and Start_time=? and End_time=? and Hall_id=? and user_id=?';
                 con.query(sqlupd,[formattedDate,start,end,hallid,userId],(err, results)=>{
                     if (err) throw err;
                     res.json({ message: 'Approval Successful' });
-                    console.log("ok");
+                    //console.log("ok");
                 });
               }else{
                 const sqldel = 'Delete from hall_booking where is_approved=0 and Date_=? and Start_time=? and End_time=? and Hall_id=? and user_id=?';
                 con.query(sqldel,[formattedDate,start,end,hallid,userId],(err, results)=>{
                     if (err) throw err;
-                    console.log("notok");
+                    //console.log("notok");
                     res.json({ message: 'Auto Rejecting !! Due to Clash' });
                 });
               }
         }
         else{
-          console.log("you can also approve this");
+          //console.log("you can also approve this");
           const sqlupd = 'UPDATE hall_booking set is_approved=1 where Date_=? and Start_time=? and End_time=? and Hall_id=? and user_id=?';
                 con.query(sqlupd,[formattedDate,start,end,hallid,userId],(err, results)=>{
                     if (err) throw err;
@@ -218,19 +218,19 @@ router.post('/deleteDatabase', (req, res) => {
     const start = req.body.start;
     const end = req.body.end;
     const userId = req.body.userId
-    console.log("HO",hallid,formattedDate,start,end,userId);
+    //console.log("HO",hallid,formattedDate,start,end,userId);
 
     const delQuery = 'Delete from hall_booking where Date_=? and Start_time=? and End_time=? and Hall_id=? and User_id=? and is_approved = 0';
     con.query(delQuery,[formattedDate,start,end,hallid,userId],(err, results)=>{
         if (err) throw err;
-        console.log(results);
+        //console.log(results);
     });
     res.json({ message: 'Rejection Successful' });
 });
 
 
 router.post('/deleteKeyholder', (req, res) => {
-  console.log("entering");
+  //console.log("entering");
   
   const roomid = req.body.roomId;
   const date = req.body.date;
@@ -243,7 +243,7 @@ router.post('/deleteKeyholder', (req, res) => {
   const day = String(inputDate.getDate()).padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
 
-  console.log("HK",roomid,formattedDate,start,userId);
+  //console.log("HK",roomid,formattedDate,start,userId);
 
   const delQuery = 'DELETE from key_assignment where Date_=? and Taking_time=? and Room_id=? and User_id=? and is_returned = 1';
   const updQuery = 'Update classroom set is_available = 1 where Room_id =?';
@@ -259,7 +259,7 @@ router.post('/deleteKeyholder', (req, res) => {
 router.get("/UI/bookHall.html", (req, res)=>{
     const cookieName = req.cookies.user;
     cookieObj = JSON.parse(cookieName);
-    console.log("Hello",cookieObj[0]);
+    //console.log("Hello",cookieObj[0]);
     const htmlFilePath = path.join(__dirname, 'UI', 'bookHall.html');
     fs.readFile(htmlFilePath, 'utf8', (err, data) => {
     if (err) throw err
@@ -276,18 +276,18 @@ router.post("/book", (req, res) => {
   const startTime = req.body.startTime;
   const endTime = req.body.endTime;
   const reason = req.body.reason;
-  console.log('booking',currentHallName)
+  //console.log('booking',currentHallName)
   var loggedInUser = "";
   
   if(Object.keys(cookieObj[0]).length==4){
     loggedInUser = cookieObj[0].Admin_id;
-    console.log("admin")
+    //console.log("admin")
   }
   else{
     loggedInUser = cookieObj[0].User_id;
-    console.log("user")
+    //console.log("user")
   }
-  console.log('from admin dashboard : logged in as', loggedInUser);
+  //console.log('from admin dashboard : logged in as', loggedInUser);
   const today = new Date();
   var todays_date = today.getDate();
   if(todays_date < 10){
@@ -307,7 +307,7 @@ router.post("/book", (req, res) => {
   //   const alert = `<script>alert('Invalid date chosen.');window.history.back();</script>`
   //   return res.send(alert);
   // }
-  console.log('date: ', date, 'today: ', requiredDate);
+  //console.log('date: ', date, 'today: ', requiredDate);
 
   if (date < requiredDate){
     const alert = `<script>alert('Invalid date chosen.');window.history.back();</script>`
@@ -325,7 +325,7 @@ router.post("/book", (req, res) => {
   var hall_id = "";
   con.query(sqlQuery, function(err, results){
     if(err) throw err;
-    console.log(results[0].hall_id);
+    //console.log(results[0].hall_id);
     hall_id = results[0].hall_id;
     sqlQuery = "select * from hall_booking where date_ = ? and start_time = ? and end_time = ? and hall_id = ? and is_approved = 1";
     con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
@@ -373,7 +373,7 @@ router.post("/book", (req, res) => {
           }
         })
       } else {
-        console.log(results);
+        //console.log(results);
         const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
         res.send(alert);
       }

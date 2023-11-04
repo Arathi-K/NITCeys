@@ -79,7 +79,7 @@ router.get('/UI/studentdashboard.html', (req, res) => {
   const month = today.getMonth() + 1;
   const year =  today.getFullYear();
   const requiredDate = String(year) + '-' + String(month) + '-' + String(todays_date);
-  console.log('date from dashboard',requiredDate);
+  //console.log('date from dashboard',requiredDate);
   const cookieName = req.cookies.user;
   if(!cookieName){
     res.redirect("/UI/login.html")
@@ -159,7 +159,7 @@ router.get('/UI/changePassword.html', (req, res) => {
 router.get('/UI/profileDetails.html', (req, res) => {
   const cookieName = req.cookies.user;
   cookieObj = JSON.parse(cookieName);
-  console.log("profile page print", cookieObj[0]);
+  //console.log("profile page print", cookieObj[0]);
   let attributes = Object.keys(cookieObj[0]).length
   const htmlFilePath = path.join(__dirname, 'UI', 'profileDetails.html');
   fs.readFile(htmlFilePath, 'utf8', (err, data) => {
@@ -231,7 +231,7 @@ router.get("/UI/bookHall.html", (req, res)=>{
     }else{
       modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
     }
-    console.log(req.query.hallName);
+    //console.log(req.query.hallName);
     currentHallName = req.query.hallName;
     
     modifiedHtml = modifiedHtml.replace('{{SELECTED_ROOM}}', '<p> Selected Room : ' + `${currentHallName}` + '</p>');
@@ -289,7 +289,7 @@ router.post("/book", (req, res) => {
   const startTime = req.body.startTime;
   const endTime = req.body.endTime;
   const reason = req.body.reason;
-  console.log('booking',currentHallName)
+  //console.log('booking',currentHallName)
   var loggedInUser = "";
   if(cookieObj[0].Privilege == 'admin' || cookieObj[0].Privilege == 'Admin'){
     loggedInUser = cookieObj[0].Admin_id;
@@ -301,7 +301,7 @@ router.post("/book", (req, res) => {
   const month = today.getMonth() + 1;
   const year =  today.getFullYear();
   const requiredDate = String(year) + '-' + String(month) + '-' + String(todays_date);
-  console.log('date',requiredDate), 'time: ', today.toTimeString();
+  //console.log('date',requiredDate), 'time: ', today.toTimeString();
   if(endTime <= startTime){
     const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
     return res.send(alert);
@@ -310,7 +310,7 @@ router.post("/book", (req, res) => {
   var hall_id = "";
   con.query(sqlQuery, function(err, results){
     if(err) throw err;
-    console.log(results[0].hall_id);
+    //console.log(results[0].hall_id);
     hall_id = results[0].hall_id;
     sqlQuery = "select * from hall_booking where date_ = ? and start_time = ? and end_time = ? and hall_id = ? and is_approved = 1";
     con.query(sqlQuery, [date, startTime,endTime,hall_id], function(err, results){
@@ -355,7 +355,7 @@ router.post("/book", (req, res) => {
           }
         })
       } else {
-        console.log(results);
+        //console.log(results);
         const alert = `<script>alert('The hall is busy. Please choose another slot.');window.history.back();</script>`
         res.send(alert);
       }
@@ -468,7 +468,7 @@ router.post("/changePhone", (req,res) => {
   var currentPhone = req.body.currentPhone;
   var newPhone = req.body.newPhone;
   var confirmPhone = req.body.confirmNewPhone;
-  console.log('digits',newPhone.length)
+  //console.log('digits',newPhone.length)
   if(currentPhone!=cookieObj[0].Phone_number){
     const alert = `<script>alert('Incorrect current phone number.'); window.location.href = '/UI/editPhoneNumber.html';</script>`
     res.send(alert);
@@ -504,7 +504,7 @@ router.post("/transfer",(req,resp)=>{
    const date = req.body.theDate
    const time = req.body.Time
    const phoneNo = req.body.phone
-   console.log("transfer",currentRoom)
+   //console.log("transfer",currentRoom)
    const regex = /^\d{10}$/; // Regular expression to match exactly 10 digits
    if (regex.test(phoneNo)) {
     const phoneQuery = "Select User_id from user where Phone_number = ?"
@@ -524,7 +524,7 @@ router.post("/transfer",(req,resp)=>{
       }
     })
   } else {
-     console.log("hiiiiiiii");
+     //console.log("hiiiiiiii");
      const alert =`<script>alert('Phone no should contain 10 digits');window.history.back();</script>`;
      resp.send(alert)
   }

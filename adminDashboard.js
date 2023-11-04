@@ -289,22 +289,27 @@ router.post("/book", (req, res) => {
   }
   console.log('from admin dashboard : logged in as', loggedInUser);
   const today = new Date();
-  const todays_date = today.getDate();
+  var todays_date = today.getDate();
+  if(todays_date < 10){
+    todays_date = "0" + String(todays_date);
+  }
   const month = today.getMonth() + 1;
   const year =  today.getFullYear();
   const requiredDate = String(year) + '-' + String(month) + '-' + String(todays_date);
-  console.log('date',requiredDate, 'time: ', today.toTimeString());
+  // console.log('date',requiredDate, 'time: ', today.toTimeString());
   const hrs = today.getHours();
   const mins = today.getMinutes();
   const secs = today.getSeconds();
   const current_time = String(hrs) + ":" + String(mins);
-  console.log('current time: ', current_time);
+  // console.log('current time: ', current_time);
   // console.log('date: ', date, 'required date: ', requiredDate)
   // if(date < requiredDate){
   //   const alert = `<script>alert('Invalid date chosen.');window.history.back();</script>`
   //   return res.send(alert);
   // }
-  if (date < today){
+  console.log('date: ', date, 'today: ', requiredDate);
+
+  if (date < requiredDate){
     const alert = `<script>alert('Invalid date chosen.');window.history.back();</script>`
     return res.send(alert);
   }

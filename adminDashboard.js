@@ -278,7 +278,8 @@ router.post("/book", (req, res) => {
   const reason = req.body.reason;
   //console.log('booking',currentHallName)
   var loggedInUser = "";
-  
+  const cookieName = req.cookies.user;
+  cookieObj = JSON.parse(cookieName);
   if(Object.keys(cookieObj[0]).length==4){
     loggedInUser = cookieObj[0].Admin_id;
     //console.log("admin")

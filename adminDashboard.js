@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const { error } = require('console');
 router.use(cookieParser());
 let cookieObject = "";
-
+let currentHallName = "";
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.json()); // For parsing JSON bodies
 

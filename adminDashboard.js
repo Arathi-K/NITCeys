@@ -299,7 +299,12 @@ router.post("/book", (req, res) => {
   const secs = today.getSeconds();
   const current_time = String(hrs) + ":" + String(mins);
   console.log('current time: ', current_time);
-  if(date < requiredDate){
+  // console.log('date: ', date, 'required date: ', requiredDate)
+  // if(date < requiredDate){
+  //   const alert = `<script>alert('Invalid date chosen.');window.history.back();</script>`
+  //   return res.send(alert);
+  // }
+  if (date < today){
     const alert = `<script>alert('Invalid date chosen.');window.history.back();</script>`
     return res.send(alert);
   }

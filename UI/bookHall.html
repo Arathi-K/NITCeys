@@ -70,7 +70,9 @@
                         <h2 class="card-title">Book Hall</h2>
                         <!-- Add a form here for changing the password -->
                         <form action="/book" method="post">
-                            {{SELECTED_ROOM}}
+                            <!-- {{SELECTED_ROOM}} -->
+                            <p> Selected Room : {{SELECTED_ROOM}} </p>
+                            <input name="room" value="{{SELECTED_ROOM}}" type="text" hidden />
                             <br>
                             <div class="form-group text-left">
                                 <label for="new-password">Date</label><span style="color:red;">*</span>

@@ -130,5 +130,39 @@
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
+    <!-- Your HTML file -->
+<script>
+    // Retrieve the cookie value
+    const cookieValue = decodeURIComponent(document.cookie);
+
+    console.log('cookie value - ', cookieValue);
+    // Create a FormData object and add the cookie as a field
+    const formData = new FormData();
+    formData.append('cookie', cookieValue);
+  
+    fetch('/UI/studentdashboard.html', {
+      method: 'POST',
+      headers: {
+        "Content-type": "application/json",
+      },
+        //   body: formData,
+      body: JSON.stringify({cookieValue})
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.text();
+      } else {
+        throw new Error('Failed to send cookie to the server');
+      }
+    })
+    .then(responseText => {
+      // Handle the response from the server (if any)
+      console.log(responseText);
+    })
+    .catch(error => {
+    console.error(error);
+    });
+  </script>
+  
 </body>
 </html>

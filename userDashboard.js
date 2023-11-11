@@ -61,7 +61,12 @@ function renderKeyList(data){
 function renderApprovedList(data){
   let selectHTML = '';
    data.forEach(item => {
-     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `Hall Name: ${item.Hall_name} <br>Date: ${item.Date_} <br>Time: ${item.Start_time} - ${item.End_time}<br> Reason: ${item.reason}` + '</li>'  ;
+    const inputDate = new Date(item.Date_)
+    const year = inputDate.getFullYear();
+    const month = String(inputDate.getMonth()+1).padStart(2, "0")
+    const day = String(inputDate.getDate()).padStart(2, "0")
+    const formattedDate = `${year}-${month}-${day}`
+     selectHTML += '<li class="list-group-item d-flex justify-content-between align-items-center">'+  `Hall Name: ${item.Hall_name} <br>Date: ${formattedDate} <br>Time: ${item.Start_time} - ${item.End_time}<br> Reason: ${item.reason}` + '</li>'  ;
    });
    return selectHTML;
 }
@@ -73,7 +78,15 @@ function renderClassroomList(data) {
   return selectHTML;
 }
 
+router.post('/UI/studentdashboard.html', (req,res) => {
+  console.log("HANDLER")
+  console.log(req.body)
+  console.log('new new cookie: ', req.body.cookieValue);
+  res.sendStatus(200);
+})
+
 router.get('/UI/studentdashboard.html', (req, res) => {
+  console.log('new cookie: ', req.body.cookie);
   const today = new Date();
   const todays_date = today.getDate();
   const month = today.getMonth() + 1;
@@ -258,6 +271,9 @@ router.get("/UI/bookHall.html", (req, res)=>{
       if(results.length===0){
 
       }else{
+      const text = results[0].Building + ' ' + results[0].Room_no;
+      console.log(text);
+      // modifiedHtml = modifiedHtml.replaceAll('{{CLASSROOM}}', text);
       modifiedHtml = modifiedHtml.replace('{{CLASSROOM}}', '<p> Selected Room : ' + `${results[0].Building}` + ' '+`${results[0].Room_no}`+ '</p>');
       res.send(modifiedHtml);
       }
@@ -364,6 +380,8 @@ router.post("/book", (req, res) => {
 });
 
 let currentClass="";
+
+
 router.get("/UI/takeKey.html", (req, res)=>{
   const cookieName = req.cookies.user;
   cookieObj = JSON.parse(cookieName);
@@ -383,7 +401,11 @@ router.get("/UI/takeKey.html", (req, res)=>{
     con.query(query,[currentClass],function(err,results){
       if(err) throw err
       if(results.length!==0){
-        modifiedHtml = modifiedHtml.replace('{{CLASSROOM}}', `${results[0].Building}`+ ' ' + `${results[0].Room_no}`);
+        const text = results[0].Building + ' ' + results[0].Room_no;
+        console.log(text);
+        modifiedHtml = modifiedHtml.replaceAll('{{CLASSROOM}}', text);
+        modifiedHtml = modifiedHtml.replace('{{ROOM_ID}}', currentClass);
+        // modifiedHtml = modifiedHtml.replace('{{CLASSROOM}}', `${results[0].Building}`+ ' ' + `${results[0].Room_no}`);
         res.send(modifiedHtml);
       }
     })
@@ -405,24 +427,48 @@ router.post("/cancelRequest", (req, res) => {
           }
         });
 });
+
+// function getRoomID(classroomName){
+//   var roomDetails = classroomName.split(' ');
+//   var query = "Select Room_id from classroom where building = ? and room_no = ?"
+//   con.query(query,[roomDetails[0],roomDetails[1]],function(err,results){
+//     if (err) throw err;
+//     if(results.length !== 0){
+//       console.log("in function body, room id is: ", results[0]);
+//       return results[0].Room_id;
+//     }
+//   })
+// }
+
+
 router.post("/takeKey", (req, res) => {
+  try {
   const boxkey = req.body.boxkey || 0;  // corrected the sequence of OR (||) operation
   const date = req.body.date;
   const takingTime = req.body.takingTime;
   const room_id = currentClass;
-
+  const cookieName = req.cookies.user;
+  cookieObj = JSON.parse(cookieName);
+  // const roomID = getRoomID(req.body.classroom);
+  // console.log('room id is: ', roomID);
+  // console.log('classrooooooooooooooom: ', req.body.classroom);
+  // console.log('VALUES', [date, takingTime,cookieObj[0].User_id, room_id, boxkey, 0])
+  // console.log('results: ', [date, takingTime,cookieObj[0].User_id, roomID, boxkey, 0]);
   const insertSqlQuery = "INSERT INTO key_assignment (Date_, Taking_time, User_id, Room_id, Box_key, is_returned) VALUES (?, ?, ?, ?, ?, ?)";
-  con.query(insertSqlQuery, [date, takingTime,cookieObj[0].User_id, room_id, boxkey, 0], function(err, insertResults) {
+  con.query(insertSqlQuery, [date, takingTime,cookieObj[0].User_id, req.body.roomID, boxkey, 0], function(err, insertResults) {
       if (err) throw err;
       else {
-        const updateSqlQuery = "UPDATE Classroom SET is_available = 0 WHERE Room_id = ?";
-        con.query(updateSqlQuery, [room_id], function(err, updateResults) {
+        const updateSqlQuery = "UPDATE classroom SET is_available = 0 WHERE Room_id = ?";
+        con.query(updateSqlQuery, [req.body.roomID], function(err, updateResults) {
             if (err) throw err;
             const alert = `<script>alert('Key taken.');window.location.href="/UI/studentdashboard.html";</script>`;
             res.send(alert);
         });
       }
   });
+} catch(err) {
+  console.error(err)
+}
 
 });
 
@@ -430,8 +476,12 @@ router.post("/change", (req, res) => {
   var currentPassword = req.body.curr;
   var newPassword = req.body.new;
   var confirmPassword = req.body.confirm;
+  const cookieName = req.cookies.user;
+  cookieObj = JSON.parse(cookieName);
+  console.log('in password menu: ', currentPassword);
   if(currentPassword!=cookieObj[0].Password){
-    const alert = `<script>alert('Your password doesn't match with the existing password'); window.location.href = '/UI/changePassword.html';</script>`
+    console.log('current password is wrong!!');
+    const alert = `<script>alert("Your password doesn't match with the existing password"); window.location.href = '/UI/changePassword.html';</script>`
     res.send(alert);
   }else{
     if(newPassword===confirmPassword){

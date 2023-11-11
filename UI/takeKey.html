@@ -69,7 +69,9 @@
                         
                         <!-- Add a form here for changing the password -->
                         <form action="/takeKey" method="post">
-                            <h2 class="card-title">{{CLASSROOM}}</h2>
+                            <h2 class="card-title"><p> Selected Room : {{CLASSROOM}}</p></h2>
+                            <input name="classroom" value="{{CLASSROOM}}" type="text" hidden/>
+                            <input name="roomID" value="{{ROOM_ID}}" type="text" hidden/>
                             <br>
                             <div class="form-group text-left">
                                 <label for="date">Date</label><span>*</span>

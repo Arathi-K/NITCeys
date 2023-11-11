@@ -265,7 +265,9 @@ router.get("/UI/bookHall.html", (req, res)=>{
     if (err) throw err
     let modifiedHtml = data;
     currentHallName = req.query.hallName;
-    modifiedHtml = modifiedHtml.replace('{{SELECTED_ROOM}}', '<p> Selected Room : ' + `${currentHallName}` + '</p>');
+    // modifiedHtml = modifiedHtml.replace('{{SELECTED_ROOM}}', '<p> Selected Room : ' + `${currentHallName}` + '</p>');
+    modifiedHtml = modifiedHtml.replaceAll('{{SELECTED_ROOM}}', req.query.hallName);
+
     res.send(modifiedHtml);
   });   
   })
@@ -276,6 +278,7 @@ router.post("/book", (req, res) => {
   const startTime = req.body.startTime;
   const endTime = req.body.endTime;
   const reason = req.body.reason;
+  console.log(req.body)
   //console.log('booking',currentHallName)
   var loggedInUser = "";
   const cookieName = req.cookies.user;
@@ -322,7 +325,7 @@ router.post("/book", (req, res) => {
     const alert = `<script>alert('Invalid timings.');window.history.back();</script>`
     return res.send(alert);
   }
-  var sqlQuery = "select hall_id from hall where hall_name = '" + currentHallName + "';";
+  var sqlQuery = "select hall_id from hall where hall_name = '" + req.body.room + "';";
   var hall_id = "";
   con.query(sqlQuery, function(err, results){
     if(err) throw err;

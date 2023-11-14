@@ -260,12 +260,18 @@ router.get("/UI/bookHall.html", (req, res)=>{
     const cookieName = req.cookies.user;
     cookieObj = JSON.parse(cookieName);
     //console.log("Hello",cookieObj[0]);
+    let attributes = Object.keys(cookieObj[0]).length
     const htmlFilePath = path.join(__dirname, 'UI', 'bookHall.html');
     fs.readFile(htmlFilePath, 'utf8', (err, data) => {
     if (err) throw err
     let modifiedHtml = data;
     currentHallName = req.query.hallName;
     // modifiedHtml = modifiedHtml.replace('{{SELECTED_ROOM}}', '<p> Selected Room : ' + `${currentHallName}` + '</p>');
+    if(attributes===4){
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/adminDashboard.html")
+    }else{
+      modifiedHtml = modifiedHtml.replace(`{{LINK}}`, "/UI/studentdashboard.html")
+    }
     modifiedHtml = modifiedHtml.replaceAll('{{SELECTED_ROOM}}', req.query.hallName);
 
     res.send(modifiedHtml);
